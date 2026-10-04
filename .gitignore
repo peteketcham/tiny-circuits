@@ -3,3 +3,6 @@ __pycache__/
 runs/*/ckpt_*.npz
 runs/*.log
 runs/*/state.pkl
+runs/**/ckpt_*.npz
+runs/**/state.pkl
+runs/**/*.log

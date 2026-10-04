@@ -62,3 +62,12 @@ Newest entries last. Failures and mistakes are recorded on purpose.
 
 **Next.** Understand the gap in the trig fit (amplitude dependence on (a,b)? cross-frequency terms?), then
 seed universality at reduced cost: smaller p (e.g. 53) so many seeds fit in the compute budget.
+
+### Sizing the seed sweep (exploratory, 2026-10-03 evening)
+
+Goal: a cheaper setting than p=113 (~0.13 s/step, ~25 min per seed to grok) so many seeds fit in the budget.
+- p=53, train_frac 0.3 (842 training pairs), 15,000 steps, ~0.02 s/step: **did not grok** (test acc 4.6% at the end).
+  The training set is too small for this weight decay and step budget. (The log for that attempt was deleted
+  and not committed; the numbers above are from the console output.)
+- p=53, train_frac 0.5: started, then interrupted by the user at about step 2000; no conclusion.
+  The partial log is in `runs/sweep_p53/s0/` and should not be read as a result.
