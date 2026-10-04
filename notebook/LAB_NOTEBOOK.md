@@ -142,3 +142,23 @@ losses over steps 0–1500 match exactly.
   whether that is initialisation bias or noise.
 - Caveat: n (the number of frequencies) is taken from the final model, which makes the prediction a little easier than
   predicting n as well.
+
+### Q5 — composite (p=45) vs prime (p=47), 24 seeds each (`runs/q5.json`, `scripts/phase2_q5.py`)
+
+Pre-registered in PLAN.md Addendum A (committed before the runs). Deviation from the original Q5 (p=105) explained there.
+- **Q5a holds.** p=45: 24/24 reach ≥99%; p=47: 23/24 (seed 19 reached 95.9% and is excluded under the same rule).
+  Key-frequency counts 3–5 at both (p=45: 9/12/3 seeds with 3/4/5; p=47: 10/8/5).
+- **Q5b holds (no enrichment).** At p=45, 41 of 90 key-frequency draws (45.6%) have gcd(k,45) > 1, against 45.4% expected
+  from random sets of the same sizes (two-sided permutation p = 1.0). Power is limited: ~90 draws means a shift of
+  roughly 10 points or more would be needed to see it.
+- **Q5c placebo passes.** The same set of k at p=47 (where it means nothing): 45 of 87 (51.7%) vs 43.5% expected, p = 0.13.
+  Not significant, so the test did not fire spuriously, but it is the biggest deviation from chance in the whole
+  Q5 analysis and a reminder that p≈0.1 results turn up in null data.
+- **Q5d holds.** Mean number of key frequencies: 3.75 (p=45) vs 3.78 (p=47), p = 1.0.
+- Validity: restricted/full loss ratio is up to 4.7 (p=45) and 2.7 (p=47), under my 10× stop rule. These occur where
+  the full loss is already tiny (seed 19 at p=45: 1.65e-6 vs 7.8e-6 restricted); the largest absolute restricted
+  loss is 6e-3 (chance level is about 3.8), and excluded loss ≥ 4.7 on every seed.
+- Both sweeps grok fast with 60% training data: the median seed has ≥50% test accuracy by the first logged step (250).
+- **Honest assessment of the prediction record:** held: Q1, Q2, Q3, Q5a–d; failed: Q4. Most of my predictions were
+  "nothing special happens" (no favoured frequencies, no composite effect), which are easy to satisfy and
+  are not strong tests. The two predictions that could have been surprising were Q3 (held, clearly) and Q4 (failed).

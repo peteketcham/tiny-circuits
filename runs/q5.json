@@ -1,0 +1,151 @@
+{
+ "S": [
+  3,
+  5,
+  6,
+  9,
+  10,
+  12,
+  15,
+  18,
+  20,
+  21
+ ],
+ "Q5a": {
+  "p45": {
+   "grokked": 24,
+   "of": 24,
+   "grok_rate": 1.0,
+   "size_min": 3,
+   "size_max": 5,
+   "size_counts": {
+    "3": 9,
+    "4": 12,
+    "5": 3
+   },
+   "failed_seeds": []
+  },
+  "p47": {
+   "grokked": 23,
+   "of": 24,
+   "grok_rate": 0.9583333333333334,
+   "size_min": 3,
+   "size_max": 5,
+   "size_counts": {
+    "3": 10,
+    "4": 8,
+    "5": 5
+   },
+   "failed_seeds": [
+    [
+     19,
+     0.9592760801315308
+    ]
+   ]
+  },
+  "prediction_holds": true
+ },
+ "Q5b_p45_gcd_enrichment": {
+  "observed": 41,
+  "total_key_freqs": 90,
+  "observed_frac": 0.45555555555555555,
+  "null_mean_frac": 0.4544111111111111,
+  "p_two_sided": 1.0,
+  "prediction_holds": true
+ },
+ "Q5c_p47_placebo": {
+  "observed": 45,
+  "total_key_freqs": 87,
+  "observed_frac": 0.5172413793103449,
+  "null_mean_frac": 0.43502298850574717,
+  "p_two_sided": 0.1304,
+  "prediction_holds": true
+ },
+ "Q5d_mean_size": {
+  "p45": 3.75,
+  "p47": 3.782608695652174,
+  "diff": -0.032608695652173836,
+  "p_two_sided": 1.0,
+  "prediction_holds": true
+ },
+ "DESCRIPTIVE_p45_most_common": [
+  [
+   16,
+   7
+  ],
+  [
+   15,
+   7
+  ],
+  [
+   11,
+   6
+  ],
+  [
+   2,
+   6
+  ],
+  [
+   12,
+   6
+  ],
+  [
+   8,
+   5
+  ],
+  [
+   6,
+   5
+  ],
+  [
+   7,
+   5
+  ]
+ ],
+ "DESCRIPTIVE_p45_grok_step_median": 250.0,
+ "DESCRIPTIVE_p45_validity": {
+  "max_restricted_over_full": 4.736048098849902,
+  "min_excluded": 6.67747688293457,
+  "min_control_restricted": 5.417360305786133
+ },
+ "DESCRIPTIVE_p47_most_common": [
+  [
+   3,
+   9
+  ],
+  [
+   13,
+   8
+  ],
+  [
+   12,
+   7
+  ],
+  [
+   6,
+   6
+  ],
+  [
+   16,
+   5
+  ],
+  [
+   10,
+   5
+  ],
+  [
+   5,
+   4
+  ],
+  [
+   17,
+   4
+  ]
+ ],
+ "DESCRIPTIVE_p47_grok_step_median": 250.0,
+ "DESCRIPTIVE_p47_validity": {
+  "max_restricted_over_full": 2.6786564595371067,
+  "min_excluded": 4.746217250823975,
+  "min_control_restricted": 3.9575772285461426
+ }
+}

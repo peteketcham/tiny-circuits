@@ -4,7 +4,7 @@ Training small transformers from scratch on algorithmic tasks and taking them ap
 Every claim below links to the evidence for it; failures and dead ends are in
 [`notebook/LAB_NOTEBOOK.md`](notebook/LAB_NOTEBOOK.md).
 
-**Status: Phase 1 (reproduce known results), one seed.** Phase 2 (extensions) has not started.
+**Status: Phase 1 (one seed, p=113) and Phase 2 (many seeds, small moduli) done on branch `phase2-seeds`.** Plan and pre-registered predictions: [`PLAN.md`](PLAN.md).
 
 ![Phase 1 progress](docs/phase1_progress.png)
 
@@ -37,6 +37,25 @@ Task: (a + b) mod 113, 30% of the 12,769 pairs for training, AdamW lr 1e-3, weig
 | 9 | Activation patching (3000 clean/corrupted pairs; metric = how often the *clean* answer comes back; chance 0.9%): no single head's clean output restores it (1–2%); all four heads restore 100%; patching all heads except one restores only ~32–34% whichever one is left out; patching all MLP activations restores 100%; patching only one frequency group of neurons restores 1.6–5.3%. So the answer is computed jointly from all four heads and all four neuron groups, not by any single sub-circuit. | `mechanism.json` (`activation_patching_clean_answer_accuracy`) | Medium |
 | 10 | **Partly refuted:** the textbook form logit(c) ≈ Σₖ aₖcos(wₖ(a+b−c)) + bₖsin(wₖ(a+b−c)) + class bias does *not* describe this model well enough. It explains R² = 0.82 of logit variance (0.59 without the class bias), and the fitted logits pick the right answer for only 66.7% of pairs. The model's real logits have additional structure that I have not characterised. | `mechanism.json` (`trig_fit_*`) | Medium-high that the simple form is incomplete; cause unknown |
 
+## Phase 2 results (many seeds, p=53 / 45 / 47; branch `phase2-seeds`)
+
+Setup differs from Phase 1: smaller moduli and more training data (50–60% instead of 30%) so that tens of seeds fit in a few
+hours. Predictions were written down in `PLAN.md` before the results existed. Scorecard: **held:** Q1, Q2, Q3, Q5a–d; **failed:** Q4.
+Most predictions were "nothing special happens", which is an easy bar; Q3 and Q4 were the real tests.
+
+| # | Claim | Evidence | Confidence |
+|---|-------|----------|------------|
+| P1 | 29 of 30 seeds at p=53 reach ≥99% test accuracy (the 30th, seed 8, hovers at 98.9–99.3% and has a valid circuit). Every grokked seed uses 3–5 key frequencies (6 seeds with 3, 18 with 4, 5 with 5). | `runs/sweep_p53/summary_main.json`, `compare_main.json` | High |
+| P2 | In every grokked seed the key frequencies carry the computation: test loss using only them (plus the constant term) is ≤ 3e-4 (worst restricted/full ratio 1.004), removing them gives loss ≥ 8.2, and random frequency sets of the same size fail (restricted ≥ 7.1). | same + `compare_*.json` (`validity`) | High |
+| P3 | Which frequencies a seed picks is indistinguishable from a random draw. The most common frequency (9) appears in 9 of 29 seeds, against a null mean of 8.6 for the maximum (p = 0.50). Mean pairwise overlap 0.087 vs 0.091 under the null (p = 0.80), and no two seeds share the same set. Same at 0.5% and 2% thresholds. | `compare_main/f005/f02.json` | Medium: absence of evidence at n=29, not proof of uniformity |
+| P4 | The frequencies are largely settled within the first ~100 steps, while the model still scores near chance on the test set. Taking the top-n embedding frequencies at the last checkpoint with test accuracy < 20% (median step 100), mean Jaccard overlap with the final set is 0.75 (chance 0.09; 86% of seeds above 0.5). By step 50 it is 0.55. It keeps creeping up to 0.93 at step 1500. | `runs/sweep_p53/q3.json` | Medium-high; n is taken from the final model, and the by-step curve is post hoc |
+| P5 | Composite vs prime modulus (p=45 vs p=47, 24 seeds each): no detected difference. 3–5 key frequencies at both; at p=45 45.6% of key frequencies share a factor with 45 vs 45.4% expected by chance (p = 1.0); mean number of key frequencies 3.75 vs 3.78. A placebo on p=47 did not fire (p = 0.13). | `runs/q5.json` | Low-medium: ~90 draws can only detect a ~10-point shift, and p=45 is small |
+| P6 | Training is bit-for-bit deterministic on this machine: independent reruns match the original weights exactly in 30/30 seeds (step 1500) and in 3/3 full 6000-step retrainings (seeds 0, 8, 17). | Lab notebook (C2, Q3) | High on this machine |
+| P7 | **Failed prediction:** head duplication as in Phase 1 does not hold up. I predicted that in most seeds two heads would write the same dominant frequency with ≥50% share each; that is true in only 13 of 29 seeds. The looser statement ("two heads share a dominant frequency", 28/29) is almost guaranteed by pigeonhole (4 heads, 3–5 frequencies; chance alone gives ~26/29), so I don't claim it. | `compare_main.json` (`Q4`) | High that the strict version fails |
+
+Caveats that apply to everything here: one architecture; small moduli; the key-frequency definition (a frequency pair holding ≥1% of the class-varying
+logit energy) is mine; "no difference" results are limited by the number of seeds.
+
 ## Not done yet (in the Phase 1 plan)
 
 - **Why claim 10 fails.** The fit is on raw logits, which are dominated by large values; the gap may come from amplitude varying with (a, b), cross-frequency terms, or ReLU harmonics. Not yet tested.
@@ -48,7 +67,8 @@ Task: (a + b) mod 113, 30% of the 12,769 pairs for training, AdamW lr 1e-3, weig
 
 ```
 tiny_circuits/   model.py (JAX transformer), data.py, train.py, analysis.py (Fourier toolkit)
-scripts/         phase1_analysis.py, phase1_mechanism.py, plot_phase1.py
+scripts/         phase1_*.py, plot_phase1.py, sweep.py, phase2_analysis.py, phase2_compare.py, phase2_q3.py, phase2_q5.py
+PLAN.md          Phase 2 plan, pre-registered predictions, addendum
 runs/p113_s0/    config, training log, final weights, analysis + progress-measure JSON
 notebook/        LAB_NOTEBOOK.md
 ```
