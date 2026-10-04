@@ -8,3 +8,5 @@ runs/**/state.pkl
 runs/**/*.log
 runs/sweep_p53_early/
 runs/sweep_p53_verify/
+runs/sweep_p45/
+runs/sweep_p47/

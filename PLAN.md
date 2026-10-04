@@ -52,3 +52,21 @@ Prediction: composite does not change the Fourier story; key frequencies are not
 - No claim in the README without a pointer to a JSON file in the repo.
 - Failed or odd seeds stay in the tables; no cherry-picking.
 - `main` is untouched. Work is on branch `phase2-seeds`; merging is the user's call.
+
+---
+## Addendum A (written 2026-10-04 01:35 CDT, after C2, before any Q5 run) — pre-registration of Q5
+
+**Deviation from the plan above.** Q5 said p = 105 vs a prime near it. At ~0.2 s/step that allows only ~8 seeds in the
+time left, too few for any statistical statement. Replaced with **p = 45 (= 3²·5, composite) vs p = 47 (prime)**,
+train_frac 0.6, 4000 steps, seeds 0–23 for each. (Pilot, seed 0 only: both reach 100% test accuracy by step 1000.)
+
+**Predictions, fixed now.**
+- Q5a: ≥ 90% of seeds reach ≥ 99% test accuracy at both moduli, with 2–7 key frequencies each.
+- Q5b (main): key frequencies of p = 45 models are **not** enriched or depleted for frequencies k with gcd(k,45) > 1
+  (10 of the 22 frequencies, 45%). Two-sided permutation test on the pooled key-frequency count, permuting within
+  seeds (random sets of the observed sizes), 5000 draws; "holds" means p > 0.05.
+  My confidence is low (~50/50): there is a plausible mechanism for enrichment (short-period frequencies correspond
+  to the subgroup structure) or depletion.
+- Q5c: placebo. Same statistic for the p = 47 models using the *same set of k* ({3,5,6,9,10,12,15,18,20,21}), which has no
+  meaning mod 47. Prediction: not enriched (p > 0.05). If this placebo fires, the test is unreliable and Q5b is void.
+- Q5d: mean number of key frequencies differs between p = 45 and p = 47 by less than 1 (two-sided permutation test, p > 0.05).
