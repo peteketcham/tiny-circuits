@@ -1,0 +1,54 @@
+# Phase 2 plan (written 2026-10-03 22:25 CDT, before any Phase 2 results)
+
+Work window ends **08:00 CDT 2026-10-04**; final push by 07:45. Predictions below are fixed now and will not be
+edited. If results disagree, the README reports the disagreement.
+
+## Setup
+
+p = 53, train_frac 0.5, 1 layer / 4 heads / d_model 128 / d_mlp 512, AdamW lr 1e-3 wd 1.0, full batch,
+6000 steps, seeds 0..N-1 (seed controls both init and the train/test split). Same code as Phase 1.
+The setting differs from Phase 1 (p=113, 30%), so Phase 2 results are not directly comparable to it.
+
+## Questions and pre-registered predictions
+
+**Q1. Does every seed find a Fourier circuit, and how many frequencies does it use?**
+Prediction: ≥90% of seeds reach ≥99% test accuracy; each such seed has 2–7 key frequencies.
+(Key frequency = (k,k) pair holding ≥1% of the class-varying logit energy; same definition as Phase 1.)
+
+**Q2. Do seeds pick the same frequencies?**
+Prediction: no. Chosen sets look like random draws from the 26 available frequencies: no frequency appears in
+more than ~50% of seeds, and the most common pair of identical sets is rare. (Null model: uniform random sets
+of the observed sizes. I will compare to it.)
+
+**Q3. Can the final frequencies be predicted before the model generalises?**
+Prediction: partly. Taking the top-n embedding frequencies at the last checkpoint where test accuracy is still
+<20% (n = final number of key frequencies), mean overlap (Jaccard) with the final set > 0.5, versus a chance
+level of roughly 0.1.
+
+**Q4. Are heads duplicated as in the Phase 1 model?**
+Prediction: in most seeds at least two heads write the same dominant frequency (share ≥50% of their key-frequency
+norm² on one frequency, same frequency).
+
+**Q5 (stretch, only if checkpoint C2 is clean). Composite modulus.** p = 105 = 3·5·7 vs a prime of similar size.
+Prediction: composite does not change the Fourier story; key frequencies are not enriched for divisors of 105
+(frequencies k with gcd(k,105) > 1). I have low confidence in this one.
+
+## Checkpoints (each ends with a note in the lab notebook and a push)
+
+- **C1 — after 8 seeds (~23:30 CDT).** Check: grok rate; hand-verify the analysis on two seeds by reading their
+  curves and key-frequency tables; confirm the random-frequency control still separates (restricted ≈ full,
+  excluded ≫ full, random sets fail) on every grokked seed. **Stop and fix** if any seed has restricted loss more than
+  10× its full loss — that would mean the analysis, not the model, is wrong.
+- **C2 — after all seeds (~01:30 CDT).** Tabulate against Q1–Q4 *as written above*. Re-train 3 seeds from scratch and
+  require bit-identical final loss. Write down which predictions failed. Check that conclusions don't hinge on the
+  1% key-frequency threshold (rerun with 0.5% and 2%).
+- **C3 — ~02:00 CDT.** Decide whether to run Q5 based on C2. If C2 found problems, spend the time on them instead.
+- **C4 — 07:00 CDT.** Freeze experiments. Re-run every analysis script from the committed files, diff against the
+  committed JSON, update README claims and confidence levels, push. Stop by 07:45.
+
+## Rules for myself
+
+- Anything I change in the analysis after seeing a result goes in the notebook, with the reason (as in Phase 1).
+- No claim in the README without a pointer to a JSON file in the repo.
+- Failed or odd seeds stay in the tables; no cherry-picking.
+- `main` is untouched. Work is on branch `phase2-seeds`; merging is the user's call.
