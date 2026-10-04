@@ -83,3 +83,34 @@ robustness check, not a statistical test. Predictions, fixed now:
 - T4: circuit validity holds as before: restricted loss < 10× full loss (or < 1e-3 absolute) and excluded loss > 10 on every grokked seed;
   random-frequency controls fail.
 If fewer than 6 seeds finish before 07:15 CDT, I analyse the ones that did and report n.
+
+---
+## Addendum C (written 2026-10-04 08:40 CDT, before any multitask code or run) — one network, two tasks
+
+Work window ends **17:30 CDT** (user allowed until 18:00); final push by 17:30.
+
+**Question.** Train one network on both (a+b) mod p and (a·b) mod p, with the task given by the final token. Does it build separate circuits
+or share them? Multiplication mod a prime p is addition in disguise: with a primitive root g, a = g^i for a ≠ 0, so a·b = g^(i+j). I expect the
+network to learn **Fourier features over the discrete log** (period p−1) for multiplication, alongside ordinary Fourier features (period p) for addition.
+
+**Setup.** p = 53 (p−1 = 52), 1 layer / 4 heads / d_model 128 / d_mlp 512, AdamW lr 1e-3, wd 1.0, full batch, train_frac 0.5 *per task*, seeds 0–11.
+Three conditions, same code path, same hyperparameters: `add` (addition only), `mul` (multiplication only), `addmul` (both).
+Step budget is set from a pilot (seed 0 only) and may not exceed 10000. Pairs involving 0 are included in training; the key-frequency
+analysis for multiplication covers nonzero a, b, c only, and CE for it uses a softmax over the 52 nonzero classes (same definition for full and restricted).
+Key frequencies use the same rule as before: (k,k) pair holding ≥ 1% of the class-varying logit energy, in the basis of the relevant cyclic group.
+
+**Predictions, fixed now.**
+- **M1.** `addmul` reaches ≥ 99% test accuracy on *both* tasks within the budget in ≥ 80% of seeds.
+- **M2.** In grokked `addmul` seeds, addition uses 3–5 additive key frequencies and multiplication uses 3–5 key *log*-frequencies, and both pass the
+  validity checks used so far (restricted loss < 10× full or < 1e-3 absolute; excluded loss > 5; random same-size frequency sets fail).
+  Same for single-task `mul`. (Confidence: high that mul is Fourier in log-space; moderate on the exact counts.)
+- **M3.** The two tasks' key features are not specially aligned in embedding space. For each additive key feature f_k (cos/sin of 2πka/p) and each
+  multiplicative key feature h_j (cos/sin of 2πj·log a/(p−1)), take the embedding-space directions u = Eᵀf, v = Eᵀh (E = rows a = 1..p−1 of W_E).
+  Let O_real = mean cos² between additive-key and multiplicative-key directions, and O_null = the same with the multiplicative features replaced by
+  random *non-key* log-frequencies (same count, 200 draws). Prediction: O_real / O_null between 0.5 and 2.
+- **M4.** Interference slows learning: median step at which test accuracy first exceeds 50% (log resolution 250 steps) is ≥ 25% larger for the addition task
+  in `addmul` than in `add`, and likewise for multiplication in `addmul` vs `mul`. (Confidence ~60%; either direction would be informative.)
+- **M5.** MLP neurons specialise by task. For each neuron, compare mean-squared post-ReLU activation (final position) over all addition inputs vs
+  all multiplication inputs. In grokked `addmul` seeds, more than 50% of neurons have a ratio ≥ 5 in one direction.
+
+**Rules.** As before: deviations and post hoc analyses are labelled in the notebook; failed seeds stay in the tables; `main` is untouched.
