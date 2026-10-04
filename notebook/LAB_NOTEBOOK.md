@@ -256,3 +256,8 @@ p=113, 30% training data (the Phase 1 setting), seeds 1–5 complete, 14000 step
 - `multitask_summary.json` regenerated from scratch and is byte-identical to the first run (analysis is deterministic given fixed seed-0 RNG for the controls).
 - Mistakes this stretch: (1) mis-stamped notebook entry 11:36 (true 11:22), fixed in place; (2) PLAN scorecard stamped 13:15 (true 12:15), fixed; (3) first multitask_analysis crashed on non-grokked models (random-control pool too small) — added a guard, those models get valid=False and no M3.
 - The 0.85 single-task baselines were stopped by a time limit at step 2750 (no final.npz); only their logs are used.
+
+## 2026-10-04 14:35 CDT — Addendum E results
+- addmul frac 0.85, 20000 steps: seed 1 → 1.000/1.000, seed 2 → 1.000/0.993 (final.npz after 20000 steps; last log line shows 19750 for seed 2). So the earlier "does not reach 99%" for seed 0 was a slow seed, not a failure of the regime; prediction E(b) failed.
+- All six task-models are valid Fourier circuits (additive in Z_53, log-space for mul). M3 seed 1 = 0.445 (below the 0.5 prediction floor); M5 ≈ 70% selective neurons everywhere.
+- Caveat to keep: this regime (85% of pairs per task) was chosen after M1 failed, so the "learns eventually" result is exploratory.

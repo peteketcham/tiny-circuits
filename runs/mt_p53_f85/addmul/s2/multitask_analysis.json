@@ -1,0 +1,58 @@
+{
+ "run": "runs/mt_p53_f85/addmul/s2",
+ "weights": "final.npz",
+ "p": 53,
+ "tasks": "addmul",
+ "seed": 2,
+ "train_frac": 0.85,
+ "tasks_result": {
+  "add": {
+   "test_acc": 1.0,
+   "key_freqs": [
+    4,
+    9,
+    11,
+    12,
+    25
+   ],
+   "n_key": 5,
+   "full_loss": 0.0016125876910718857,
+   "restricted_loss": 3.6939194619265147e-07,
+   "excluded_loss": 9.543607050420405,
+   "random_restricted_min": 6.1426214340993335,
+   "random_restricted_mean": 6.206217113790617,
+   "first_step_test_acc_gt_0.5": 250,
+   "valid": true
+  },
+  "mul": {
+   "test_acc": 0.9928909952606635,
+   "test_acc_nonzero_pairs_over_52_classes": 0.9925558312655087,
+   "key_freqs": [
+    2,
+    12,
+    13,
+    21,
+    26
+   ],
+   "n_key": 5,
+   "full_loss": 0.033195787331555295,
+   "restricted_loss": 3.0678986889906743e-06,
+   "excluded_loss": 13.965181921193054,
+   "random_restricted_min": 9.516301897162936,
+   "random_restricted_mean": 9.636537456683634,
+   "first_step_test_acc_gt_0.5": 250,
+   "valid": true
+  }
+ },
+ "M3": {
+  "O_real": 0.04222346249466916,
+  "O_null_mean": 0.07448280401771103,
+  "ratio": 0.5668887342725306
+ },
+ "M5": {
+  "frac_neurons_ratio_ge_5_either_way": 0.708984375,
+  "frac_add_selective": 0.35546875,
+  "frac_mul_selective": 0.353515625,
+  "frac_dead": 0.0
+ }
+}

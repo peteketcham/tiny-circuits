@@ -136,3 +136,5 @@ M4: not testable as registered (the 50% metric is degenerate); with a post hoc 9
 Run `addmul`, train_frac 0.85, 20000 steps, seeds 1 and 2 (seed 0 already done), to turn the n=1 descriptive results (P10, P13) into n=3.
 Predictions fixed now: (a) each seed ends with ≥ 90% on both tasks (seed 0: 96%/99%); (b) neither reaches ≥ 99% on *both* tasks (seed 0 did not); (c) each task has 3–7 key frequencies and passes validity;
 (d) M3 ratio between 0.5 and 2; (e) M5: >50% of neurons selective. Still exploratory (the regime was chosen after M1 failed).
+
+**Addendum E result (written ~14:35 CDT).** (a) holds 3/3 (seed 0, 1, 2 all ≥ 96%/98.6% on both). (b) **fails**: seeds 1 and 2 reach ≥ 99% on both tasks (seed 2: 1.000/0.993). (c) holds: 4–6 key frequencies per task, all valid (the 3–7 range). (d) 2/3: ratios 0.80, 0.45, 0.57, seed 1 just under 0.5. (e) holds 3/3 (69–71% of neurons).
