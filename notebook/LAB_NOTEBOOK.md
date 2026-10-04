@@ -235,3 +235,11 @@ p=113, 30% training data (the Phase 1 setting), seeds 1–5 complete, 14000 step
 - The analysis script was re-run and its output is byte-identical to the committed summary.
 - Operational note: with `--ckpt_every 1000` at this size the training overshoots its time budget and the outer `timeout` killed it twice
   (exit 124), losing up to 1000 steps each time. Resuming is bit-exact, so nothing is affected; `--ckpt_every 250` fixed it.
+
+## 2026-10-04 09:56 CDT — multitask (Addendum C): M1 FAILS at the registered setting
+- `addmul`, p=53, train_frac 0.5 per task, 10000 steps, seeds 0–3 (seed 0 = pilot continued from 5000... to 10000). None grokked.
+  Final test acc (add/mul): s0 0.469/0.362; s1 0.483/0.519; s2 0.295/0.347; s3 0.407/0.431. M1 (≥80% of seeds ≥99% on both) is a failed prediction (0/4).
+- Pilot, single-task add and mul (same code path, seed 0): both reached 0.99 by ~3000 steps, so the code path itself works.
+- Likely (untested) explanation: two tasks share capacity; test acc ~0.5 matches memorisation + commutativity (about half of test pairs have their mirror in train).
+- Time bookkeeping: Addendum C says "written 08:40 CDT" but the true time was ~08:30. Earlier I also misquoted a time to the user (said 04:30 at 03:54). Content of predictions was not affected.
+- Next: a post hoc, labelled deviation regime where addmul does learn (higher per-task train fraction), plus single-task baselines.

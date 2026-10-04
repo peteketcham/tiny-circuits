@@ -9,12 +9,12 @@ import jax.numpy as jnp
 import numpy as np
 
 
-def init_params(key, p, d_model=128, n_heads=4, d_mlp=512, n_ctx=3):
+def init_params(key, p, d_model=128, n_heads=4, d_mlp=512, n_ctx=3, n_tok=None):
     d_head = d_model // n_heads
     ks = jax.random.split(key, 8)
     s = lambda fan_in: 1.0 / np.sqrt(fan_in)
     return {
-        "W_E": jax.random.normal(ks[0], (p + 1, d_model)) * s(d_model),
+        "W_E": jax.random.normal(ks[0], (p + 1 if n_tok is None else n_tok, d_model)) * s(d_model),
         "W_pos": jax.random.normal(ks[1], (n_ctx, d_model)) * s(d_model),
         "W_Q": jax.random.normal(ks[2], (n_heads, d_model, d_head)) * s(d_model),
         "W_K": jax.random.normal(ks[3], (n_heads, d_model, d_head)) * s(d_model),
