@@ -47,7 +47,11 @@ def forward(params, tokens, return_cache=False, patch=None):
     if "pattern" in patch:
         pattern = patch["pattern"](pattern)
     z = jnp.einsum("bhqk,bhke->bhqe", pattern, v)
-    attn_out = jnp.einsum("bhqe,hed->bqd", z, params["W_O"])
+    if "head_out" in patch:   # per-head outputs [b,h,q,d]; only built when patched, so the default path is unchanged
+        head_out = patch["head_out"](jnp.einsum("bhqe,hed->bhqd", z, params["W_O"]))
+        attn_out = head_out.sum(1)
+    else:
+        attn_out = jnp.einsum("bhqe,hed->bqd", z, params["W_O"])
     if "attn_out" in patch:
         attn_out = patch["attn_out"](attn_out)
     resid_mid = x + attn_out

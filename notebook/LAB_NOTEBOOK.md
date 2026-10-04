@@ -44,5 +44,21 @@ Newest entries last. Failures and mistakes are recorded on purpose.
 - Neuron-level analysis is weak: median explained fraction 0.22, none > 0.9. The metric includes
   cross terms and ReLU harmonics; I do not yet have a better one.
 
-**Next.** Implement activation patching and a weight-level check of the trig-identity mechanism, then move to
-seed universality (many seeds, cluster by key-frequency set).
+### Mechanism checks (same day, later)
+
+`scripts/phase1_mechanism.py`, results in `runs/p113_s0/mechanism.json`.
+- `W_E` and `W_U` both have top-4 frequencies {24, 28, 46, 56}.
+- Per-head OV content: heads 0 and 2 are nearly identical (k=46: 80.88% and 80.89% of key-frequency norm²);
+  heads 1 and 3 likewise (k=24: 86.0% and 85.7%). Two duplicated pairs. Worth testing in Phase 2 whether
+  the number of duplicates depends on seed or head count.
+- Activation patching: no single head restores the clean answer; all heads together restore 100%; any three
+  restore about a third. The answer is built from all four jointly.
+- **The clean trig-identity form did not hold up.** Fitting logits to Σₖ aₖcos+bₖsin of wₖ(a+b−c) plus a
+  class bias gives R² = 0.82 but only 66.7% argmax accuracy, so the textbook description is incomplete for
+  this model. I expected it to fit better than that. Not yet explained; I would not write "the network
+  implements the trig identity" on this evidence.
+- `model.py` gained an optional `head_out` patch hook. The default path is untouched, and I re-checked that
+  the final model's test loss is bit-identical (5.786600922874641e-06) after the edit.
+
+**Next.** Understand the gap in the trig fit (amplitude dependence on (a,b)? cross-frequency terms?), then
+seed universality at reduced cost: smaller p (e.g. 53) so many seeds fit in the compute budget.

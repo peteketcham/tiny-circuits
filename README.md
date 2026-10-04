@@ -15,6 +15,7 @@ pip install "jax[cpu]" numpy matplotlib optax
 python -m tiny_circuits.train --p 113 --seed 0 --steps 20000 --ckpt_every 250 --out runs/p113_s0
 #   (~40 min on 2 cores; add --max_seconds N and --resume to run in chunks. Resume is bit-exact.)
 PYTHONPATH=. python scripts/phase1_analysis.py runs/p113_s0   # -> analysis.json, progress.json
+PYTHONPATH=. python scripts/phase1_mechanism.py runs/p113_s0  # -> mechanism.json
 PYTHONPATH=. python scripts/plot_phase1.py runs/p113_s0       # -> docs/phase1_progress.png
 ```
 
@@ -31,11 +32,15 @@ Task: (a + b) mod 113, 30% of the 12,769 pairs for training, AdamW lr 1e-3, weig
 | 4 | All four attention heads matter. Removing any one raises test loss from 6e-6 to between 2.9 and 4.1 (chance is 4.73). | `analysis.json` (`head_ablation_test_loss`); ablation zeroes the head's attention pattern, which is crude | Medium |
 | 5 | MLP neurons fall into four groups by dominant frequency (133 / 102 / 143 / 134 neurons for k = 24 / 28 / 46 / 56). **Not supported:** that neurons are cleanly single-frequency. Median variance fraction explained by the dominant frequency is only 0.22 and no neuron exceeds 0.9, as expected for ReLU neurons with harmonics. | `analysis.json` (`neuron_*`) | Medium for the grouping; the "single-frequency" reading is not claimed |
 | 6 | Training is bit-for-bit reproducible on one machine, including across the chunked resume: the interrupted run and the resumed run agree exactly on train and test loss at steps 2200 and 4000. | Lab notebook, 2026-10-03 | High on this machine; other hardware untested |
+| 7 | The input and output sides use the same four frequencies. The top-4 Fourier frequencies of both `W_E` and `W_U` are {24, 28, 46, 56}. (80% of `W_U` norm² is in them, against 93% for `W_E`.) | `mechanism.json` | High for this seed |
+| 8 | The heads specialise by frequency, in two near-duplicate pairs. Heads 0 and 2 write mostly k=46 (81% of key-frequency norm², with 13% on 28 and 6% on 56). Heads 1 and 3 write mostly k=24 (86%). This is what each head's value-output circuit *writes*, not proof of how the MLP uses it. | `mechanism.json` (`head_OV_frequency_content`) | Medium |
+| 9 | Activation patching (3000 clean/corrupted pairs; metric = how often the *clean* answer comes back; chance 0.9%): no single head's clean output restores it (1–2%); all four heads restore 100%; patching all heads except one restores only ~32–34% whichever one is left out; patching all MLP activations restores 100%; patching only one frequency group of neurons restores 1.6–5.3%. So the answer is computed jointly from all four heads and all four neuron groups, not by any single sub-circuit. | `mechanism.json` (`activation_patching_clean_answer_accuracy`) | Medium |
+| 10 | **Partly refuted:** the textbook form logit(c) ≈ Σₖ aₖcos(wₖ(a+b−c)) + bₖsin(wₖ(a+b−c)) + class bias does *not* describe this model well enough. It explains R² = 0.82 of logit variance (0.59 without the class bias), and the fitted logits pick the right answer for only 66.7% of pairs. The model's real logits have additional structure that I have not characterised. | `mechanism.json` (`trig_fit_*`) | Medium-high that the simple form is incomplete; cause unknown |
 
 ## Not done yet (in the Phase 1 plan)
 
-- **Activation patching** is not implemented as an analysis. `model.forward` has patch hooks and the head and neuron ablations use them, but there is no patching experiment yet.
-- **Mechanism-level check.** Claim 3 is about the logits. I have not yet verified at the weight level that the MLP computes the cos/sin products of the key frequencies.
+- **Why claim 10 fails.** The fit is on raw logits, which are dominated by large values; the gap may come from amplitude varying with (a, b), cross-frequency terms, or ReLU harmonics. Not yet tested.
+- **Weight-level circuit.** Claim 3 is about the logits. I have not shown, from the weights alone, how the MLP produces the key-frequency terms.
 - **Seeds.** Everything is one seed. Seed universality is the first Phase 2 experiment.
 - **Observed, not investigated:** training loss shows regular sharp spikes every ~1.4k steps (visible in the figure, left panel).
 
@@ -43,7 +48,7 @@ Task: (a + b) mod 113, 30% of the 12,769 pairs for training, AdamW lr 1e-3, weig
 
 ```
 tiny_circuits/   model.py (JAX transformer), data.py, train.py, analysis.py (Fourier toolkit)
-scripts/         phase1_analysis.py, plot_phase1.py
+scripts/         phase1_analysis.py, phase1_mechanism.py, plot_phase1.py
 runs/p113_s0/    config, training log, final weights, analysis + progress-measure JSON
 notebook/        LAB_NOTEBOOK.md
 ```
