@@ -70,3 +70,16 @@ train_frac 0.6, 4000 steps, seeds 0–23 for each. (Pilot, seed 0 only: both rea
 - Q5c: placebo. Same statistic for the p = 47 models using the *same set of k* ({3,5,6,9,10,12,15,18,20,21}), which has no
   meaning mod 47. Prediction: not enriched (p > 0.05). If this placebo fires, the test is unreliable and Q5b is void.
 - Q5d: mean number of key frequencies differs between p = 45 and p = 47 by less than 1 (two-sided permutation test, p > 0.05).
+
+---
+## Addendum B (written 2026-10-04 04:05 CDT, before any p=113 sweep run) — does it transfer to the Phase 1 setting?
+
+Phase 2 used small moduli and 50–60% training data. Check the headline findings at **p = 113, train_frac 0.3** (the Phase 1 setting),
+seeds 1–6 (seed 0 is the Phase 1 run), 14000 steps, same code. Only ~6 seeds fit (≈30 min each), so this is a
+robustness check, not a statistical test. Predictions, fixed now:
+- T1: ≥ 5 of 6 seeds reach ≥ 99% test accuracy within 14000 steps. (Phase 1 seed 0 needed ~10000; some seeds may be slower.)
+- T2: every grokked seed has 3–5 key frequencies (same ≥1% definition).
+- T3: no two seeds (counting seed 0 = {24, 28, 46, 56}) have the same key-frequency set.
+- T4: circuit validity holds as before: restricted loss < 10× full loss (or < 1e-3 absolute) and excluded loss > 10 on every grokked seed;
+  random-frequency controls fail.
+If fewer than 6 seeds finish before 07:15 CDT, I analyse the ones that did and report n.
