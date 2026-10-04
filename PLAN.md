@@ -122,3 +122,6 @@ train_frac 0.7 per task (p=53, everything else unchanged), up to 8000 steps. Pil
 `addmul` at 0.7 plus `add` and `mul` single-task baselines at 0.7 (same seeds, 3000–4000 steps). If the pilot fails, try 0.85 once, then stop and report that
 the two-task network did not grok in my budget. M1–M5 are then scored *in this regime* and reported as "deviation regime", never merged with the registered result.
 Predictions M2–M5 stand as written in Addendum C (M4 now compares against baselines at 0.7). Seed count is smaller than registered (6 not 12) because of time.
+
+**Addendum D result / D2 (written 10:46 CDT).** Pilot seed 0, 8000 steps: frac 0.7 → test acc 0.708/0.711 (add/mul), no grok. frac 0.85 → 0.893/0.867 at 8000 and still rising slowly.
+D2 (post hoc): extend the 0.85 pilot to 20000 steps (same seed, bit-exact resume). If both tasks reach ≥99%, run seeds 1–3 at 0.85 for 20000 steps (≈35 min each) plus single-task baselines; otherwise stop the multitask line and report.

@@ -1,0 +1,17 @@
+{
+ "p": 53,
+ "tasks": "addmul",
+ "seed": 0,
+ "train_frac": 0.7,
+ "steps": 8000,
+ "lr": 0.001,
+ "wd": 1.0,
+ "d_model": 128,
+ "n_heads": 4,
+ "d_mlp": 512,
+ "log_every": 250,
+ "ckpt_every": 250,
+ "out": "runs/mt_p53_f70/addmul/s0",
+ "resume": false,
+ "max_seconds": 519.9999811649323
+}

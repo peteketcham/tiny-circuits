@@ -243,3 +243,10 @@ p=113, 30% training data (the Phase 1 setting), seeds 1–5 complete, 14000 step
 - Likely (untested) explanation: two tasks share capacity; test acc ~0.5 matches memorisation + commutativity (about half of test pairs have their mirror in train).
 - Time bookkeeping: Addendum C says "written 08:40 CDT" but the true time was ~08:30. Earlier I also misquoted a time to the user (said 04:30 at 03:54). Content of predictions was not affected.
 - Next: a post hoc, labelled deviation regime where addmul does learn (higher per-task train fraction), plus single-task baselines.
+
+## 2026-10-04 11:22 CDT (originally mis-stamped 11:36) — multitask deviation pilots (Addendum D / D2), seed 0 only
+- frac 0.7, 8000 steps: 0.708/0.711 (add/mul) — no grok, test acc plateau.
+- frac 0.85, 8000 steps: 0.893/0.867; extended to 20000 steps (bit-exact resume; the 8000-step weights kept as `at8000_final.npz`): 0.962/0.986 at step 20000.
+  mul crossed 0.98 at ~16500, add peaked 0.972. A transient collapse at step 11000 (0.704/0.803) recovered. **Not ≥99% on both**, so by the D2 rule the multitask seeds sweep is NOT run.
+  So `addmul` seems to learn eventually but ~10× slower than single-task and still short of 99% at 20000 steps (one seed; the only reading I can defend is "slow, not impossible").
+- Plan change (post hoc, exploratory): analyse this one model with the generic Fourier tools (M2/M3/M5 as descriptive, n=1) and run single-task add/mul baselines (registered setting, frac 0.5) to test M2 for multiplication properly.
