@@ -9,7 +9,7 @@ from tiny_circuits.data import modular_addition
 ap = argparse.ArgumentParser(); ap.add_argument("dir"); ap.add_argument("--min_frac", type=float, default=0.01)
 ap.add_argument("--tag", default="main"); a = ap.parse_args()
 rows = []
-for d in sorted(glob.glob(f"{a.dir}/s*"), key=lambda x: int(x.rsplit("/s", 1)[1])):
+for d in sorted(glob.glob(f"{a.dir}/s[0-9]*"), key=lambda x: int(x.rsplit("/s", 1)[1])):
     if not os.path.exists(f"{d}/final.npz"):
         continue
     cfg = json.load(open(f"{d}/config.json")); p = cfg["p"]; seed = cfg["seed"]

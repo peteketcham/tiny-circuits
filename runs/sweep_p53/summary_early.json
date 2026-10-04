@@ -1,0 +1,98 @@
+[
+ {
+  "seed": 0,
+  "final_test_acc": 1.0,
+  "final_train_acc": 1.0,
+  "grok_step_50": 1000,
+  "status": "grokked",
+  "key_freqs": [
+   7,
+   15,
+   21,
+   26
+  ],
+  "test_loss": {
+   "full": 0.0006490318919532001,
+   "restricted": 6.1421619648172054e-06,
+   "excluded": 11.094643592834473
+  },
+  "control": {
+   "restricted_min": 9.143251419067383,
+   "excluded_max": 0.0006767129525542259
+  },
+  "embed_top_n": [
+   7,
+   15,
+   21,
+   26
+  ],
+  "heads_dominant_freq_share": [
+   [
+    7,
+    0.34164229732048734
+   ],
+   [
+    26,
+    0.3776548920688115
+   ],
+   [
+    26,
+    0.4484884886375541
+   ],
+   [
+    15,
+    0.43713482290082667
+   ]
+  ],
+  "early_step": 250,
+  "early_pred_jaccard": 0.6
+ },
+ {
+  "seed": 1,
+  "final_test_acc": 1.0,
+  "final_train_acc": 1.0,
+  "grok_step_50": 1000,
+  "status": "grokked",
+  "key_freqs": [
+   3,
+   4,
+   9,
+   17
+  ],
+  "test_loss": {
+   "full": 4.0239010559162125e-05,
+   "restricted": 5.846416115673492e-06,
+   "excluded": 10.092355728149414
+  },
+  "control": {
+   "restricted_min": 8.463046073913574,
+   "excluded_max": 0.0002789615246001631
+  },
+  "embed_top_n": [
+   3,
+   4,
+   9,
+   17
+  ],
+  "heads_dominant_freq_share": [
+   [
+    9,
+    0.4525119060225619
+   ],
+   [
+    9,
+    0.4513861823102452
+   ],
+   [
+    17,
+    0.43038934020327896
+   ],
+   [
+    17,
+    0.6441622034642847
+   ]
+  ],
+  "early_step": 250,
+  "early_pred_jaccard": 0.6
+ }
+]

@@ -73,3 +73,26 @@ Goal: a cheaper setting than p=113 (~0.13 s/step, ~25 min per seed to grok) so m
   `runs/sweep_p53/s0/`). So this setting groks quickly (under ~2.5k steps, roughly 1 minute), which makes a
   many-seed sweep affordable. It was not run to completion, so final accuracy and circuit are unchecked.
   Note this is a different split than Phase 1 (50% vs 30%), so sweep results will not be directly comparable.
+
+## 2026-10-03/04 — Phase 2 seed sweep (p=53, 50% train, 6000 steps). Plan: `PLAN.md`
+
+Note: the exploratory `runs/sweep_p53/s0` files mentioned above were deleted from the working tree when the
+real sweep began (same directory name); they remain in git history (commit before `db9cfa7`).
+
+### C1 (8 seeds done, ~4.5 min/seed)
+- 8/8 grokked. Stop condition (restricted loss >10× full loss) did not trigger. Random-frequency controls fail
+  on every seed (restricted min 7–21 vs ≲2e-5 for the key set). Key-frequency counts: 3–5 (four seeds with 4, two with 3, one with 5... see `summary_c1.json`).
+- Bug fixed in `phase2_analysis.py`: seed-directory glob matched `summary_*.json`; now `s[0-9]*`.
+- **Q2 is under pressure.** Frequency 9 appears in 5/8 seeds' key sets, 7 in 4/8, 21 in 3/8. Pre-registered
+  prediction was "no frequency in more than ~50% of seeds". Uniform null: a given frequency appears with
+  probability ~4/26 ≈ 15% per seed. Will test properly (permutation null) at C2 instead of eyeballing. Possible
+  reasons to check: some frequencies are easier to learn; split/seed correlations.
+- **Q3 cannot be assessed as designed.** Grokking is fast (test acc >50% by step 500–1000 in most seeds, 2250 in the
+  slowest), so for 5/8 seeds there is no checkpoint at ckpt_every=250 where test acc is still <20%
+  (`early_J` = NaN). Training is bit-exact, so the fix is to re-run seeds with checkpoints every 25 steps for
+  the first 1500 steps, keeping the pre-registered definition ("last checkpoint with test acc < 20%"). Do this
+  at C2/C3.
+- **Q4 definition is strict.** I wrote "share ≥ 50%". Head shares here are 0.34–0.76, and several seeds have
+  two heads on the *same* dominant frequency with shares of ~0.45 (e.g. seed 1: freqs 9, 9, 17, 17). I will
+  report Q4 by the pre-registered rule and separately report the looser "same dominant frequency" count,
+  labelled as post hoc.
