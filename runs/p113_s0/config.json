@@ -3,7 +3,7 @@
  "seed": 0,
  "data_seed": null,
  "train_frac": 0.3,
- "steps": 15000,
+ "steps": 20000,
  "lr": 0.001,
  "wd": 1.0,
  "d_model": 128,
