@@ -81,7 +81,7 @@ real sweep began (same directory name); they remain in git history (commit befor
 
 ### C1 (8 seeds done, ~4.5 min/seed)
 - 8/8 grokked. Stop condition (restricted loss >10× full loss) did not trigger. Random-frequency controls fail
-  on every seed (restricted min 7–21 vs ≲2e-5 for the key set). Key-frequency counts: 3–5 (four seeds with 4, two with 3, one with 5... see `summary_c1.json`).
+  on every seed (restricted min 7–21 vs ≲2e-5 for the key set). Key-frequency counts: 3–5 (five seeds with 4, two with 3, one with 5; see `summary_c1.json`).
 - Bug fixed in `phase2_analysis.py`: seed-directory glob matched `summary_*.json`; now `s[0-9]*`.
 - **Q2 is under pressure.** Frequency 9 appears in 5/8 seeds' key sets, 7 in 4/8, 21 in 3/8. Pre-registered
   prediction was "no frequency in more than ~50% of seeds". Uniform null: a given frequency appears with
@@ -96,3 +96,31 @@ real sweep began (same directory name); they remain in git history (commit befor
   two heads on the *same* dominant frequency with shares of ~0.45 (e.g. seed 1: freqs 9, 9, 17, 17). I will
   report Q4 by the pre-registered rule and separately report the looser "same dominant frequency" count,
   labelled as post hoc.
+
+### C2 (all 30 seeds done, 00:35 CDT) — scoring PLAN.md Q1, Q2, Q4
+
+Scripts: `phase2_analysis.py` → `runs/sweep_p53/summary_<tag>.json`; `phase2_compare.py` → `compare_<tag>.json`.
+Tags: `main` (1% key-frequency threshold, 99% grok cutoff), `f005`/`f02` (0.5% / 2% threshold), `g98` (98% cutoff).
+
+- **Q1 holds.** 29/30 seeds reach ≥99% test accuracy; key-frequency counts are 3 (6 seeds), 4 (18), 5 (5).
+  The miss is seed 8, a slow grokker: 96% at step 3000, then 98.9–99.3% for the rest of training, so it fell
+  0.1 point under my cutoff at step 6000. It stays in the tables as "no_grok" under the pre-registered rule.
+  Sensitivity (`g98`, cutoff 98%): seed 8 has a valid 5-frequency circuit (restricted 1.1e-4 vs full 5.0e-2);
+  nothing below changes.
+- **Q2 holds, and the C1 worry was small-sample noise.** At 8 seeds frequency 9 looked over-represented. At 29 seeds the
+  most common frequency (9) appears in 9 seeds (31%); a random-draw null with the same set sizes (5000 draws)
+  gives a mean maximum of 8.6 (95th percentile 11), p = 0.50. Mean pairwise Jaccard between seeds' sets is 0.087 vs
+  0.091 under the null (p = 0.80); zero pairs of seeds have identical sets. Results are the same at thresholds
+  0.5% and 2% (p = 0.58/0.84 and 0.86/0.91). So: no evidence that seeds favour particular frequencies. This is
+  absence of evidence at n≈29, not proof of uniformity.
+- **Q4 fails as pre-registered.** Rule: ≥2 heads with the same dominant frequency, each with share ≥ 50% of
+  key-frequency norm². Met in 13/29 seeds (45%); I predicted a majority.
+  Post hoc, loosening to "≥2 heads share a dominant frequency" gives 28/29, **but that statistic is nearly
+  uninformative**: with 4 heads and 3–5 key frequencies, random assignment already makes a repeat likely
+  (certain for 3 frequencies; 91% for 4; 81% for 5; expected ≈ 26 of 29 seeds). The Phase 1 model's duplicated heads
+  were remarkable because shares were ~80–86% and nearly identical between heads, not because two heads shared a label.
+  I make no "duplicate heads" claim for the sweep.
+- **Circuit validity across all grokked seeds:** worst restricted/full ratio 1.004 at the 1% threshold (1.8 at 2%,
+  where a key frequency starts to be dropped); smallest excluded loss 8.2; random-frequency controls: restricted
+  ≥ 7.1, excluded ≤ 0.013. Time to 50% test accuracy: median 750 steps (range 500–2250).
+- **Not yet done:** Q3 (needs early checkpoints; below) and the re-training determinism check from PLAN.md C2.

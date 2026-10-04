@@ -1,0 +1,17 @@
+{
+ "p": 53,
+ "seed": 29,
+ "data_seed": null,
+ "train_frac": 0.5,
+ "steps": 6000,
+ "lr": 0.001,
+ "wd": 1.0,
+ "d_model": 128,
+ "n_heads": 4,
+ "d_mlp": 512,
+ "log_every": 250,
+ "ckpt_every": 250,
+ "out": "runs/sweep_p53/s29",
+ "resume": false,
+ "max_seconds": 148.44907665252686
+}

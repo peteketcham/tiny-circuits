@@ -7,6 +7,7 @@ from tiny_circuits import analysis as A
 from tiny_circuits.data import modular_addition
 
 ap = argparse.ArgumentParser(); ap.add_argument("dir"); ap.add_argument("--min_frac", type=float, default=0.01)
+ap.add_argument("--grok_thresh", type=float, default=0.99)
 ap.add_argument("--tag", default="main"); a = ap.parse_args()
 rows = []
 for d in sorted(glob.glob(f"{a.dir}/s[0-9]*"), key=lambda x: int(x.rsplit("/s", 1)[1])):
@@ -18,7 +19,7 @@ for d in sorted(glob.glob(f"{a.dir}/s[0-9]*"), key=lambda x: int(x.rsplit("/s", 
     onset = [x["step"] for x in log if x["test_acc"] > 0.5]
     r["grok_step_50"] = onset[0] if onset else None
     P = A.load(f"{d}/final.npz")
-    if r["final_test_acc"] < 0.99:
+    if r["final_test_acc"] < a.grok_thresh:
         r["status"] = "no_grok"; rows.append(r); continue
     r["status"] = "grokked"
     train, test = modular_addition(p, cfg["train_frac"], seed)

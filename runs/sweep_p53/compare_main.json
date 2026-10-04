@@ -1,0 +1,56 @@
+{
+ "tag": "main",
+ "n_seeds": 30,
+ "n_grokked": 29,
+ "Q1": {
+  "grok_rate": 0.9666666666666667,
+  "size_min": 3,
+  "size_max": 5,
+  "size_counts": {
+   "3": 6,
+   "4": 18,
+   "5": 5
+  },
+  "prediction_holds": true
+ },
+ "Q2": {
+  "appearance_counts_top": {
+   "9": 9,
+   "11": 7,
+   "21": 7,
+   "3": 6,
+   "7": 6,
+   "16": 6,
+   "6": 6,
+   "1": 5
+  },
+  "max_appearance": 9,
+  "max_appearance_frac": 0.3103448275862069,
+  "null_max_appearance_mean": 8.6432,
+  "null_max_appearance_p95": 11.0,
+  "p_value_max_appearance": 0.4996,
+  "mean_pairwise_jaccard": 0.08685784658691062,
+  "null_mean_jaccard": 0.09144235788568301,
+  "p_value_jaccard": 0.7978,
+  "identical_pairs": 0,
+  "prediction_holds": true
+ },
+ "Q4": {
+  "strict_rule_seeds": 13,
+  "loose_same_dominant_freq_seeds_POSTHOC": 28,
+  "of": 29,
+  "prediction_holds": false
+ },
+ "validity": {
+  "max_restricted_over_full": 1.004343286993681,
+  "worst_restricted_loss": 0.00030108282226137817,
+  "min_excluded_loss": 8.193888664245605,
+  "min_control_restricted": 7.068222999572754,
+  "max_control_excluded": 0.013405951671302319
+ },
+ "grok_step_50": {
+  "median": 750.0,
+  "min": 500,
+  "max": 2250
+ }
+}
