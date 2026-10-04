@@ -2,3 +2,4 @@ __pycache__/
 *.pyc
 runs/*/ckpt_*.npz
 runs/*.log
+runs/*/state.pkl

@@ -2,7 +2,7 @@
 
   python -m tiny_circuits.train --p 113 --seed 0 --steps 10000 --out runs/p113_s0
 """
-import argparse, json, os, time
+import argparse, json, os, pickle, time
 import jax, jax.numpy as jnp, numpy as np, optax
 from .model import init_params, forward, loss_fn
 from .data import modular_addition
@@ -27,9 +27,12 @@ def main():
     ap.add_argument("--log_every", type=int, default=100)
     ap.add_argument("--ckpt_every", type=int, default=500)
     ap.add_argument("--out", required=True)
+    ap.add_argument("--resume", action="store_true", help="continue from <out>/state.pkl (exact: full-batch, no RNG)")
+    ap.add_argument("--max_seconds", type=float, default=None, help="stop cleanly after this wall time; rerun with --resume")
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
-    json.dump(vars(a), open(f"{a.out}/config.json", "w"), indent=1)
+    if not a.resume:
+        json.dump(vars(a), open(f"{a.out}/config.json", "w"), indent=1)
 
     (xtr, ytr), (xte, yte) = modular_addition(a.p, a.train_frac,
                                               a.seed if a.data_seed is None else a.data_seed)
@@ -48,8 +51,19 @@ def main():
     def evaluate(params):
         return (loss_fn(params, xte, yte), accuracy(params, xtr, ytr), accuracy(params, xte, yte))
 
-    log, t0 = [], time.time()
-    for i in range(a.steps + 1):
+    log, start = [], 0
+    if a.resume and os.path.exists(f"{a.out}/state.pkl"):
+        st = pickle.load(open(f"{a.out}/state.pkl", "rb"))
+        params = jax.tree_util.tree_map(jnp.asarray, st["params"])
+        state = jax.tree_util.tree_map(jnp.asarray, st["opt"])
+        start, log = st["step"], json.load(open(f"{a.out}/log.json"))
+        log = [r for r in log if r["step"] <= start]
+        print(f"resumed at step {start}", flush=True)
+    t0 = time.time() - (log[-1]["t"] if log else 0)
+    t_session = time.time()
+    for i in range(start, a.steps + 1):
+        if a.max_seconds and time.time() - t_session > a.max_seconds and i % a.ckpt_every == 0:
+            break
         if i % a.log_every == 0:
             tl, tra, tea = map(float, evaluate(params))
             trl = float(loss_fn(params, xtr, ytr))
@@ -60,9 +74,12 @@ def main():
             json.dump(log, open(f"{a.out}/log.json", "w"))
         if i % a.ckpt_every == 0:
             np.savez(f"{a.out}/ckpt_{i:06d}.npz", **{k: np.asarray(v) for k, v in params.items()})
+            pickle.dump(dict(step=i, params=jax.tree_util.tree_map(np.asarray, params),
+                             opt=jax.tree_util.tree_map(np.asarray, state)), open(f"{a.out}/state.pkl", "wb"))
         if i < a.steps:
             params, state, _ = step(params, state)
-    np.savez(f"{a.out}/final.npz", **{k: np.asarray(v) for k, v in params.items()})
+    if i >= a.steps:
+        np.savez(f"{a.out}/final.npz", **{k: np.asarray(v) for k, v in params.items()})
 
 
 if __name__ == "__main__":

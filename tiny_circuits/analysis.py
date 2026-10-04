@@ -50,10 +50,17 @@ def embed_fourier_norms(params, p):
     return np.array([np.sqrt((proj[fr == k] ** 2).sum()) for k in range((p - 1) // 2 + 1)])
 
 
-def key_frequencies(params, p, thresh=0.1):
-    """Frequencies whose embedding norm exceeds thresh * max (excluding const). Returns sorted array."""
-    n = embed_fourier_norms(params, p)[1:]
-    return np.where(n > thresh * n.max())[0] + 1
+def key_frequencies(params, p, min_frac=0.01):
+    """Key frequencies = those k whose (k,k) 2D-Fourier pair holds >= min_frac of the logit
+    energy that varies with the output class (const-in-(a,b) component excluded from the
+    denominator). Cross-check against embed_fourier_norms."""
+    F, _ = fourier_basis(p)
+    L = np.asarray(full_logits(params, p))
+    Lf = np.einsum("ia,jb,abc->ijc", F, F, L, optimize=True)
+    E = ((Lf - Lf.mean(-1, keepdims=True)) ** 2).sum(-1)
+    fr = freq_of_index(p)
+    pair = np.array([E[np.ix_(fr == k, fr == k)].sum() for k in range((p - 1) // 2 + 1)])
+    return np.where(pair[1:] / pair[1:].sum() >= min_frac)[0] + 1
 
 
 def _component_mask(p, freqs):
@@ -64,15 +71,19 @@ def _component_mask(p, freqs):
 
 
 def restricted_excluded_loss(params, p, freqs, split=None):
-    """Nanda et al. progress measures. Logits [a,b,c] -> 2D Fourier over (a,b) -> keep (restricted)
-    or remove (excluded) the key-frequency components. Returns (full, restricted, excluded) CE
-    over the pairs in `split` = (tokens, labels) or all pairs."""
+    """Progress measures after Nanda et al. Logits [a,b,c] -> 2D Fourier over (a,b).
+    key   = components with both a- and b-frequency in `freqs`
+    const = the (0,0) component (a class-dependent bias; large in practice, must be kept)
+    restricted = key + const ;  excluded = full - key.
+    Returns CE of (full, restricted, excluded) on `split` = (tokens, labels), or all pairs."""
     F, _ = fourier_basis(p)
     L = np.asarray(full_logits(params, p))
-    Lf = np.einsum("ia,jb,abc->ijc", F, F, L)
-    m = _component_mask(p, freqs)[:, :, None]
-    rec = lambda x: np.einsum("ia,jb,ijc->abc", F, F, x)
-    restricted, excluded = rec(Lf * m), rec(Lf * ~m)
+    Lf = np.einsum("ia,jb,abc->ijc", F, F, L, optimize=True)
+    rec = lambda x: np.einsum("ia,jb,ijc->abc", F, F, x, optimize=True)
+    mk = _component_mask(p, freqs)[:, :, None]
+    mc = np.zeros((p, p, 1), bool); mc[0, 0] = True
+    key, const = rec(Lf * mk), rec(Lf * mc)
+    restricted, excluded = key + const, L - key
     if split is None:
         toks, labels = all_pairs(p); idx = np.arange(p * p)
     else:
@@ -110,7 +121,7 @@ def neuron_frequency_profile(params, p):
     _, cache = forward(params, toks, return_cache=True)
     act = np.asarray(cache["mlp_post"][:, -1, :]).reshape(p, p, -1)      # [a,b,n]
     F, _ = fourier_basis(p)
-    Af = np.einsum("ia,jb,abn->ijn", F, F, act)
+    Af = np.einsum("ia,jb,abn->ijn", F, F, act, optimize=True)
     fr = freq_of_index(p)
     nf = (p - 1) // 2
     # energy per frequency (a-axis freq k, b-axis freq k), ignoring const

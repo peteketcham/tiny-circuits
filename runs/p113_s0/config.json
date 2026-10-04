@@ -11,5 +11,7 @@
  "d_mlp": 512,
  "log_every": 100,
  "ckpt_every": 250,
- "out": "runs/p113_s0"
+ "out": "runs/p113_s0",
+ "resume": false,
+ "max_seconds": 420.0
 }
