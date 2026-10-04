@@ -162,3 +162,20 @@ Pre-registered in PLAN.md Addendum A (committed before the runs). Deviation from
 - **Honest assessment of the prediction record:** held: Q1, Q2, Q3, Q5a–d; failed: Q4. Most of my predictions were
   "nothing special happens" (no favoured frequencies, no composite effect), which are easy to satisfy and
   are not strong tests. The two predictions that could have been surprising were Q3 (held, clearly) and Q4 (failed).
+
+## 2026-10-04 ~04:00 CDT — Why does the trig-identity fit fail? (Phase 1 model, pre-registered hypotheses)
+
+Open question from Phase 1 claim 10: Σₖ [aₖ cos + bₖ sin](wₖ(a+b−c)) + class bias gives R² = 0.82 and 66.7% argmax accuracy.
+Written **before** looking at the 3-D Fourier decomposition of the logits (in the orthonormal basis, projecting
+onto a subset of components *is* the least-squares fit, so energy fractions are exact):
+- **H1 (same frequency, other sign patterns).** The logits contain extra components at the *same* key frequency in all three
+  axes (e.g. cos(w(a+b+c)), i.e. an "elliptical" rather than circular readout: A·cos(ws)cos(wc) + B·sin(ws)sin(wc) with
+  A≠B contains both cos(w(s−c)) and cos(w(s+c))). Prediction: adding all 8 real (k,k,k) components per key frequency
+  lifts argmax accuracy to ≳ 95%.
+- **H2 (cross-frequency / harmonic terms).** The missing energy sits at components mixing different frequencies
+  (e.g. (k₁,k₁,k₂), (k,k,2k)). Prediction: if H1 is false, most of the remaining energy is in cross-frequency terms.
+- **H3 (amplitude depends on (a,b)).** Not directly testable in this decomposition; it would show up as many small
+  components spread over (a,b) frequencies other than the key ones. Will be reported only if H1 and H2 together leave
+  > 10% of class-varying energy unexplained.
+My expectation: H1 is the main reason (~60% confidence), H2 second.
+Script: `scripts/phase1_trigfit_gap.py` → `runs/p113_s0/trigfit_gap.json`.
