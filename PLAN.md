@@ -130,3 +130,9 @@ D2 (post hoc): extend the 0.85 pilot to 20000 steps (same seed, bit-exact resume
 **Multitask scorecard (written ~12:15 CDT; see README Phase 3).** M1 **failed** (registered setting 0/4; pilots at 0.7 and 0.85 per-task data did not reach 99% on both).
 M2: held for single-task mul (6/6, 3–5 log-frequencies, valid) and single-task add (6/6 valid; counts 4,6,4,4,5,4 so 5/6 inside 3–5). M3/M5: n=1, consistent with the predictions but not formally scored.
 M4: not testable as registered (the 50% metric is degenerate); with a post hoc 90% threshold, addmul is ≥19× slower than single-task (n=1).
+
+---
+## Addendum E (written 2026-10-04 12:25 CDT, post hoc extension; D2's "otherwise stop" rule is overridden because time remains)
+Run `addmul`, train_frac 0.85, 20000 steps, seeds 1 and 2 (seed 0 already done), to turn the n=1 descriptive results (P10, P13) into n=3.
+Predictions fixed now: (a) each seed ends with ≥ 90% on both tasks (seed 0: 96%/99%); (b) neither reaches ≥ 99% on *both* tasks (seed 0 did not); (c) each task has 3–7 key frequencies and passes validity;
+(d) M3 ratio between 0.5 and 2; (e) M5: >50% of neurons selective. Still exploratory (the regime was chosen after M1 failed).
