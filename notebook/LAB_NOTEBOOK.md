@@ -69,5 +69,7 @@ Goal: a cheaper setting than p=113 (~0.13 s/step, ~25 min per seed to grok) so m
 - p=53, train_frac 0.3 (842 training pairs), 15,000 steps, ~0.02 s/step: **did not grok** (test acc 4.6% at the end).
   The training set is too small for this weight decay and step budget. (The log for that attempt was deleted
   and not committed; the numbers above are from the console output.)
-- p=53, train_frac 0.5: started, then interrupted by the user at about step 2000; no conclusion.
-  The partial log is in `runs/sweep_p53/s0/` and should not be read as a result.
+- p=53, train_frac 0.5: interrupted by the user at step ~2250, but already at **94.7% test accuracy** (log in
+  `runs/sweep_p53/s0/`). So this setting groks quickly (under ~2.5k steps, roughly 1 minute), which makes a
+  many-seed sweep affordable. It was not run to completion, so final accuracy and circuit are unchecked.
+  Note this is a different split than Phase 1 (50% vs 30%), so sweep results will not be directly comparable.
