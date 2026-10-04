@@ -36,7 +36,7 @@ Newest entries last. Failures and mistakes are recorded on purpose.
    so the final result does not depend on that choice: random sets give restricted loss ≥ 25.8.
    The unexplained part: why k=1 has an embedding norm of 2.5 and no logit presence. Not investigated.
 
-**Result.** See README claims 1–6. Grokking onset (test acc > 50%) at step 8600, 100% by step 10000.
+**Result.** See README claims 1–10 (claims 7–10 come from the mechanism checks below). Grokking onset (test acc > 50%) at step 8600, 100% by step 10000.
 
 **Open observations**
 - Training loss has regular sharp spikes about every 1.4k steps, in both train and test curves. Looks like
