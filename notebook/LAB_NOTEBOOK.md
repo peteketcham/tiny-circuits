@@ -124,3 +124,21 @@ Tags: `main` (1% key-frequency threshold, 99% grok cutoff), `f005`/`f02` (0.5% /
   where a key frequency starts to be dropped); smallest excluded loss 8.2; random-frequency controls: restricted
   ≥ 7.1, excluded ≤ 0.013. Time to 50% test accuracy: median 750 steps (range 500–2250).
 - **Not yet done:** Q3 (needs early checkpoints; below) and the re-training determinism check from PLAN.md C2.
+
+### Q3 — early prediction of the key frequencies (`runs/sweep_p53/q3.json`, `scripts/phase2_q3.py`)
+
+Regenerated each seed's first 1500 steps with a checkpoint every 25 steps (`runs/sweep_p53_early/`, not committed).
+**Determinism check:** weights at step 1500 are bit-identical to the original sweep in 30/30 seeds, and all logged train/test
+losses over steps 0–1500 match exactly.
+- **Q3 holds.** At the last checkpoint with test accuracy < 20% (median: step 100), the top-n embedding
+  frequencies match the final key set with mean Jaccard 0.75 (median 0.67; 86% of seeds above 0.5) against a chance
+  level of 0.093. Predicted: > 0.5.
+- Bug caught while scoring: the first version of the chance baseline drew two *different* random sets for the
+  intersection and the union (gave 0.083). Fixed to draw once (0.093). The conclusion did not change.
+- **Post hoc, not pre-registered:** mean Jaccard by step: 0 → 0.13, 50 → 0.55, 100 → 0.75, 200 → 0.76, 500 → 0.80,
+  1000 → 0.83, 1500 → 0.93. So the frequencies are largely settled within the first ~100 steps, while test accuracy is
+  still near chance and long before the generalisation jump (median step 750). It keeps creeping up afterwards, so some
+  seeds still change a frequency later. Step 0 is 0.13 against a chance of 0.093; with 29 seeds I cannot tell
+  whether that is initialisation bias or noise.
+- Caveat: n (the number of frequencies) is taken from the final model, which makes the prediction a little easier than
+  predicting n as well.

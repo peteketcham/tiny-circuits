@@ -6,3 +6,5 @@ runs/*/state.pkl
 runs/**/ckpt_*.npz
 runs/**/state.pkl
 runs/**/*.log
+runs/sweep_p53_early/
+runs/sweep_p53_verify/
