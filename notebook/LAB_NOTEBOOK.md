@@ -178,7 +178,7 @@ onto a subset of components *is* the least-squares fit, so energy fractions are 
   components spread over (a,b) frequencies other than the key ones. Will be reported only if H1 and H2 together leave
   > 10% of class-varying energy unexplained.
 My expectation: H1 is the main reason (~60% confidence), H2 second.
-Script: `scripts/phase1_trigfit_gap.py` → `runs/p113_s0/trigfit_gap.json`.
+Scripts: `scripts/phase1_trigfit_gap.py` → `trigfit_gap.json`; `scripts/phase1_trigfit_gap_control.py` → `trigfit_gap_control.json` (the control was first run inline, then committed as a script and checked to reproduce exactly).
 
 ### Result: the trig-fit gap (`runs/p113_s0/trigfit_gap.json`, `trigfit_gap_control.json`; scripts `phase1_trigfit_gap.py`)
 
@@ -201,3 +201,19 @@ class bias (0,0,k) 23.0%; a, b and c all at the same key frequency (all 8 sign p
 - **What this changes in the README.** Claim 10 is rewritten: the simple "Σ cos(w(a+b−c))" form is an energy-level
   description that misses what the argmax needs. I have not shown *how* the network produces these extra terms, or that
   they are a "sharpening" of the peak (a plausible but untested reading).
+
+## C4 — final verification pass (2026-10-04, before the 07:45 deadline)
+
+Re-ran every analysis script from the committed code and weights and diffed the output JSON against what is in git:
+`phase1_analysis`, `phase1_mechanism`, `phase1_trigfit_gap` (Phase 1); `phase2_analysis` (tags main, f005, f02, g98),
+`phase2_compare`, `phase2_q3`, `phase2_q5` (Phase 2). **All outputs reproduce byte-for-byte**, except
+`trigfit_gap_control.json`, which changed only because it now comes from a committed script
+(`phase1_trigfit_gap_control.py`) and gained fields; the headline numbers match the earlier inline run exactly
+(structured 0.9844, random mean 0.8027, max 0.9406).
+Housekeeping found by this pass:
+- The harmonic-control result had been produced from an inline snippet, with no script in the repo. Fixed (above).
+- `.gitignore` excluded the whole `runs/sweep_p45` and `runs/sweep_p47` folders, so the per-seed data behind Q5 wasn't in the
+  repo. Now only `final.npz` (the heavy part) is ignored; configs, logs and summaries are tracked.
+- `summary_c1.json` and `summary_early.json` in `runs/sweep_p53/` are snapshots from the 8-seed and 2-seed stages and are not
+  regenerated; the final numbers are in `summary_main.json`.
+Not verified: reproducibility on a different machine or JAX version; seeds are bit-reproducible only on the setup used here.
