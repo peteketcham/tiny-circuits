@@ -1,0 +1,29 @@
+{
+ "run": "runs/mt_p53/mul/s3",
+ "weights": "final.npz",
+ "p": 53,
+ "tasks": "mul",
+ "seed": 3,
+ "train_frac": 0.5,
+ "tasks_result": {
+  "mul": {
+   "test_acc": 1.0,
+   "test_acc_nonzero_pairs_over_52_classes": 1.0,
+   "key_freqs": [
+    3,
+    9,
+    18,
+    19,
+    26
+   ],
+   "n_key": 5,
+   "full_loss": 0.0006833579511612315,
+   "restricted_loss": 4.5419123746089604e-07,
+   "excluded_loss": 9.655598446072409,
+   "random_restricted_min": 8.245425767270362,
+   "random_restricted_mean": 8.265184980320909,
+   "first_step_test_acc_gt_0.5": 1000,
+   "valid": true
+  }
+ }
+}

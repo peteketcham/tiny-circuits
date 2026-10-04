@@ -125,3 +125,8 @@ Predictions M2–M5 stand as written in Addendum C (M4 now compares against base
 
 **Addendum D result / D2 (written 10:46 CDT).** Pilot seed 0, 8000 steps: frac 0.7 → test acc 0.708/0.711 (add/mul), no grok. frac 0.85 → 0.893/0.867 at 8000 and still rising slowly.
 D2 (post hoc): extend the 0.85 pilot to 20000 steps (same seed, bit-exact resume). If both tasks reach ≥99%, run seeds 1–3 at 0.85 for 20000 steps (≈35 min each) plus single-task baselines; otherwise stop the multitask line and report.
+
+---
+**Multitask scorecard (written ~12:15 CDT; see README Phase 3).** M1 **failed** (registered setting 0/4; pilots at 0.7 and 0.85 per-task data did not reach 99% on both).
+M2: held for single-task mul (6/6, 3–5 log-frequencies, valid) and single-task add (6/6 valid; counts 4,6,4,4,5,4 so 5/6 inside 3–5). M3/M5: n=1, consistent with the predictions but not formally scored.
+M4: not testable as registered (the 50% metric is degenerate); with a post hoc 90% threshold, addmul is ≥19× slower than single-task (n=1).

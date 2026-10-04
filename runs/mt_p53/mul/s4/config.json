@@ -1,0 +1,17 @@
+{
+ "p": 53,
+ "tasks": "mul",
+ "seed": 4,
+ "train_frac": 0.5,
+ "steps": 4000,
+ "lr": 0.001,
+ "wd": 1.0,
+ "d_model": 128,
+ "n_heads": 4,
+ "d_mlp": 512,
+ "log_every": 250,
+ "ckpt_every": 500,
+ "out": "runs/mt_p53/mul/s4",
+ "resume": false,
+ "max_seconds": 99210.68791723251
+}

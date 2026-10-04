@@ -1,0 +1,27 @@
+{
+ "run": "runs/mt_p53/add/s2",
+ "weights": "final.npz",
+ "p": 53,
+ "tasks": "add",
+ "seed": 2,
+ "train_frac": 0.5,
+ "tasks_result": {
+  "add": {
+   "test_acc": 1.0,
+   "key_freqs": [
+    4,
+    11,
+    19,
+    24
+   ],
+   "n_key": 4,
+   "full_loss": 7.157525018343063e-05,
+   "restricted_loss": 4.745396402427151e-07,
+   "excluded_loss": 11.466715639307713,
+   "random_restricted_min": 9.855264512223926,
+   "random_restricted_mean": 9.8727265887066,
+   "first_step_test_acc_gt_0.5": 750,
+   "valid": true
+  }
+ }
+}

@@ -250,3 +250,9 @@ p=113, 30% training data (the Phase 1 setting), seeds 1–5 complete, 14000 step
   mul crossed 0.98 at ~16500, add peaked 0.972. A transient collapse at step 11000 (0.704/0.803) recovered. **Not ≥99% on both**, so by the D2 rule the multitask seeds sweep is NOT run.
   So `addmul` seems to learn eventually but ~10× slower than single-task and still short of 99% at 20000 steps (one seed; the only reading I can defend is "slow, not impossible").
 - Plan change (post hoc, exploratory): analyse this one model with the generic Fourier tools (M2/M3/M5 as descriptive, n=1) and run single-task add/mul baselines (registered setting, frac 0.5) to test M2 for multiplication properly.
+
+## 2026-10-04 12:20 CDT — multitask results written up
+- Single-task baselines (frac 0.5, 4000 steps, seeds 0–5): mul 6/6 grok with 3–5 log-frequencies; add 6/6 grok (one seed with 6 key freqs). Control: mul models in the Z_p basis have all 26 frequencies above threshold.
+- `multitask_summary.json` regenerated from scratch and is byte-identical to the first run (analysis is deterministic given fixed seed-0 RNG for the controls).
+- Mistakes this stretch: (1) mis-stamped notebook entry 11:36 (true 11:22), fixed in place; (2) PLAN scorecard stamped 13:15 (true 12:15), fixed; (3) first multitask_analysis crashed on non-grokked models (random-control pool too small) — added a guard, those models get valid=False and no M3.
+- The 0.85 single-task baselines were stopped by a time limit at step 2750 (no final.npz); only their logs are used.

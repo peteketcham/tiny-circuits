@@ -22,6 +22,7 @@ def logits_all(t):
 
 def controls(L, nn, key, ia, ib, labels, ndraw=20):
     pool = [k for k in range(1, (nn - 1) // 2 + 1 if nn % 2 else nn // 2 + 1) if k not in key]
+    if len(key) > len(pool): return dict(random_restricted_min=float('nan'), random_restricted_mean=float('nan'))
     rs = [M.restricted_excluded_generic(L, nn, list(rng.choice(pool, len(key), replace=False)), ia, ib, labels)[1] for _ in range(ndraw)]
     return dict(random_restricted_min=float(min(rs)), random_restricted_mean=float(np.mean(rs)))
 
@@ -43,7 +44,7 @@ for t in tl:
     r.update(key_freqs=key, n_key=len(key), full_loss=full, restricted_loss=restr, excluded_loss=excl, **controls(Lc, nn, key, ia, ib, labels))
     # first logged step with test acc > 0.5
     r["first_step_test_acc_gt_0.5"] = next((int(x["step"]) for x in log_json if x[f"{t}_test_acc"] > 0.5), None)
-    r["valid"] = bool((restr < 10 * full or restr < 1e-3) and excl > 5 and r["random_restricted_min"] > 5 * max(full, 1e-3)) if len(key) else False
+    r["valid"] = False if r["random_restricted_min"] != r["random_restricted_min"] else bool((restr < 10 * full or restr < 1e-3) and excl > 5 and r["random_restricted_min"] > 5 * max(full, 1e-3)) if len(key) else False
     res[t] = r; res[t]["_Lc"] = None
     if t == "add": Ladd_key = key
     else: Lmul_key = key
@@ -60,10 +61,12 @@ if tasks == "addmul":
         U /= np.linalg.norm(U, axis=1, keepdims=True); V /= np.linalg.norm(V, axis=1, keepdims=True)
         return float(((U @ V.T) ** 2).mean())
     Fa = feats(Ladd_key, a, p)
-    O_real = overlap(Fa, feats(Lmul_key, la, n))
     pool = [k for k in range(1, n // 2 + 1) if k not in Lmul_key]
-    nulls = [overlap(Fa, feats(list(rng.choice(pool, len(Lmul_key), replace=False)), la, n)) for _ in range(200)]
-    out["M3"] = dict(O_real=O_real, O_null_mean=float(np.mean(nulls)), ratio=O_real / float(np.mean(nulls)))
+    if len(Lmul_key) > len(pool): out["M3"] = None   # non-grokked model: too many "key" frequencies for a null
+    else:
+        O_real = overlap(Fa, feats(Lmul_key, la, n))
+        nulls = [overlap(Fa, feats(list(rng.choice(pool, len(Lmul_key), replace=False)), la, n)) for _ in range(200)]
+        out["M3"] = dict(O_real=O_real, O_null_mean=float(np.mean(nulls)), ratio=O_real / float(np.mean(nulls)))
     # M5: neuron specialisation by task
     ms = {}
     for t in tl:

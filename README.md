@@ -4,7 +4,7 @@ Training small transformers from scratch on algorithmic tasks and taking them ap
 Every claim below links to the evidence for it; failures and dead ends are in
 [`notebook/LAB_NOTEBOOK.md`](notebook/LAB_NOTEBOOK.md).
 
-**Status: Phase 1 (one seed, p=113) and Phase 2 (many seeds, small moduli) done on branch `phase2-seeds`.** Plan and pre-registered predictions: [`PLAN.md`](PLAN.md).
+**Status: Phase 1 (one seed, p=113), Phase 2 (many seeds, small moduli) and a Phase 3 multitask experiment (add + multiply in one network) done on branch `phase2-seeds`.** Plan and pre-registered predictions: [`PLAN.md`](PLAN.md).
 
 ![Phase 1 progress](docs/phase1_progress.png)
 
@@ -57,6 +57,21 @@ Most predictions were "nothing special happens", which is an easy bar; Q3 and Q4
 Caveats that apply to everything here: one architecture; small moduli; the key-frequency definition (a frequency pair holding ≥1% of the class-varying
 logit energy) is mine; "no difference" results are limited by the number of seeds.
 
+## Phase 3: one network, two tasks (add and multiply mod 53; branch `phase2-seeds`)
+
+Pre-registered in `PLAN.md` Addendum C (M1–M5). **The headline prediction failed (M1).** Deviations (Addendum D/D2) were decided after that failure and are labelled post hoc.
+Multiplication mod a prime is addition of discrete logs (period p−1 = 52), so I analyse multiplication in log coordinates; addition in ordinary coordinates.
+
+| # | Claim | Evidence | Confidence |
+|---|-------|----------|------------|
+| P9 | **Failed prediction (M1):** a network trained on both tasks (50% of pairs per task, 10000 steps) did not generalise in any of 4 seeds (final test accuracy add/mul: 0.47/0.36, 0.48/0.52, 0.30/0.35, 0.41/0.43). With 70% of pairs per task, seed 0 is stuck at 0.71 after 8000 steps. | `runs/mt_p53/addmul/s*/log.json`, `runs/mt_p53_f70/addmul/s0/log.json` | High that it fails at these settings; why is untested (my guess: capacity sharing plus a memorisation plateau) |
+| P10 | With 85% of pairs per task, seed 0 does eventually learn both tasks, but slowly and not fully: 0.962 (add) / 0.986 (mul) at 20000 steps, not the 99% bar, after a transient collapse at step 11000. Single-task models on the same split are above 99% by step 500 (those two baseline runs were cut off at step 2750 of 4000 by a time limit, which does not affect that number). So addmul needed ≥19× more steps to reach 90% (add 9750, mul 11250). The registered M4 metric (first step above 50%) is meaningless here because memorisation plus commutativity gives >50% almost immediately. | `runs/mt_p53_f85/{addmul,add,mul}/s0/log.json`; step numbers computed from those logs (post hoc, n=1) | Low-medium: one seed |
+| P11 | **Single-task multiplication is a Fourier circuit in discrete-log space** (M2, holds). 6/6 seeds reach ≥99.9% test accuracy with 3–5 log-frequencies (4,4,3,5,5,4); using only them (plus the constant) gives loss ≤ 1e-5, removing them gives loss ≥ 9.7, random same-size sets fail (restricted ≥ 8.2). Control: the same six models analysed in ordinary Z_p coordinates have **all 26** frequencies above the 1% threshold, i.e. no compact circuit, so the log-space description is the one that compresses. | `runs/mt_p53/multitask_summary.json`, `runs/mt_p53/mul/mul_additive_control.json` | Medium-high (n=6, one modulus) |
+| P12 | Single-task addition at p=53 / 50%: 6/6 seeds ≥99%, all pass validity; key-frequency counts 4,6,4,4,5,4, so one seed (6) misses the registered 3–5 range (M2 count part holds in 5/6). | same summary | High for validity, count is a threshold artefact |
+| P13 | Descriptive, **seed 0 of the 0.85 run only (n=1, did not meet the 99% bar, so M2/M3/M5 are not formally scored for it)**: addition uses 6 additive key frequencies {3,15,18,21,22,26}, multiplication 5 log-frequencies {1,3,5,12,26}; both pass validity (restricted loss 2e-4 / 7e-5 vs full 0.11 / 0.12, excluded 9.1 / 9.0, random sets ≥5.2). The restricted loss is *lower* than the full loss, so the leftover non-key components hurt. M3: embedding overlap between additive and multiplicative key features is 0.80× that of random non-key log-frequencies (prediction 0.5–2: consistent with "not specially aligned"). M5: 69% of MLP neurons are ≥5× selective for one task (29% add, 39% mul; prediction >50%). | `runs/mt_p53_f85/addmul/s0/multitask_analysis.json` | Low: one seed |
+
+Not scored or not done: M4 as registered (see P10); the 12-seed `addmul` / `add` / `mul` design (cut to 6 single-task seeds because the two-task model did not learn at the registered setting); a bigger or longer two-task run (p=53 needs ≳20000 steps at 85% data); *why* the two-task model is so slow.
+
 ## Not done yet (in the Phase 1 plan)
 
 - **Why claim 10 fails** is now partly answered (see its row) but the mechanism behind the harmonic terms is untested.
@@ -68,13 +83,13 @@ logit energy) is mine; "no difference" results are limited by the number of seed
 
 1. Explain *how* the MLP makes the harmonic and combination terms behind claim 10 (a weight-level test, not another fit).
 2. Repeat the seed sweep at p=113 / 30% data (hours per seed) to check that the small-modulus findings transfer.
-3. The original Phase 2 ideas not yet touched: non-abelian groups (S5), two algorithms competing, two tasks sharing a network.
+3. Multitask follow-up: more seeds of `addmul` at ≥20000 steps, and test *why* it is slow (capacity? the shared final-token routing?). Other ideas not touched: non-abelian groups (S5), two algorithms competing.
 
 ## Layout
 
 ```
-tiny_circuits/   model.py (JAX transformer), data.py, train.py, analysis.py (Fourier toolkit)
-scripts/         phase1_*.py, plot_phase1.py, sweep.py, phase2_analysis.py, phase2_compare.py, phase2_q3.py, phase2_q5.py
+tiny_circuits/   model.py (JAX transformer), data.py, train.py, train_multi.py, multitask.py, analysis.py (Fourier toolkit)
+scripts/         phase1_*.py, plot_phase1.py, sweep.py, mt_sweep.py, multitask_analysis.py, multitask_compare.py, multitask_mul_additive_control.py, phase2_analysis.py, phase2_compare.py, phase2_q3.py, phase2_q5.py
 PLAN.md          Phase 2 plan, pre-registered predictions, addendum
 runs/p113_s0/    config, training log, final weights, analysis + progress-measure JSON
 notebook/        LAB_NOTEBOOK.md

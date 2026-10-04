@@ -1,0 +1,44 @@
+[
+ {
+  "seed": 0,
+  "n_key_additive_basis": 26,
+  "full": 0.0020060705977425755,
+  "restricted": 0.25898519964353006,
+  "excluded": 12.541957194343812
+ },
+ {
+  "seed": 1,
+  "n_key_additive_basis": 26,
+  "full": 7.361705519693755e-06,
+  "restricted": 0.2637671683834457,
+  "excluded": 13.681618148188617
+ },
+ {
+  "seed": 2,
+  "n_key_additive_basis": 26,
+  "full": 1.0330713117262101e-05,
+  "restricted": 0.04396036394243824,
+  "excluded": 15.204889308140952
+ },
+ {
+  "seed": 3,
+  "n_key_additive_basis": 26,
+  "full": 0.0006673412815641017,
+  "restricted": 0.008184118678892648,
+  "excluded": 12.995100793378057
+ },
+ {
+  "seed": 4,
+  "n_key_additive_basis": 26,
+  "full": 1.942564414537409e-06,
+  "restricted": 0.04379382585470504,
+  "excluded": 11.873641962768097
+ },
+ {
+  "seed": 5,
+  "n_key_additive_basis": 26,
+  "full": 2.7386046321299922e-06,
+  "restricted": 0.0004633485624707818,
+  "excluded": 15.748751605656064
+ }
+]
