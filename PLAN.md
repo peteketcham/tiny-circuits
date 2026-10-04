@@ -114,3 +114,11 @@ Key frequencies use the same rule as before: (k,k) pair holding ≥ 1% of the cl
   all multiplication inputs. In grokked `addmul` seeds, more than 50% of neurons have a ratio ≥ 5 in one direction.
 
 **Rules.** As before: deviations and post hoc analyses are labelled in the notebook; failed seeds stay in the tables; `main` is untouched.
+
+---
+## Addendum D (written 2026-10-04 09:58 CDT, after M1 failed 0/4 at the registered setting) — post hoc deviation regime
+M1 failed (see notebook). M2–M5 are only meaningful where `addmul` actually groks, so I add a **deviation regime, labelled post hoc**:
+train_frac 0.7 per task (p=53, everything else unchanged), up to 8000 steps. Pilot: seed 0 only. If it reaches ≥99% on both tasks, run seeds 0–5 for
+`addmul` at 0.7 plus `add` and `mul` single-task baselines at 0.7 (same seeds, 3000–4000 steps). If the pilot fails, try 0.85 once, then stop and report that
+the two-task network did not grok in my budget. M1–M5 are then scored *in this regime* and reported as "deviation regime", never merged with the registered result.
+Predictions M2–M5 stand as written in Addendum C (M4 now compares against baselines at 0.7). Seed count is smaller than registered (6 not 12) because of time.
