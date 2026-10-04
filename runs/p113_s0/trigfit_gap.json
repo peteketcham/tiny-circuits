@@ -1,0 +1,152 @@
+{
+ "key_freqs": [
+  24,
+  28,
+  46,
+  56
+ ],
+ "class_varying_energy_total": 1383621047.692896,
+ "class_bias (0,0,k)": 0.23004092012212157,
+ "same_freq_kkk (all 8 sign patterns)": 0.6782850748540199,
+ "kk_l: a,b at key k, c at a different key l": 0.008032313411283716,
+ "kk_l: a,b at key k, c at non-key l": 0.06877384030868722,
+ "a,b at different key freqs": 0.00013230473095106533,
+ "one of a,b constant, other at key freq": 0.0007826954789559272,
+ "everything else": 0.013952851093980548,
+ "same_freq_components": {
+  "k24:cos_a*cos_b*cos_c": 0.15205131736555527,
+  "k24:sin_a*sin_b*cos_c": 0.13941101435790734,
+  "k46:sin_a*cos_b*sin_c": 0.0914539918477363,
+  "k46:cos_a*sin_b*sin_c": 0.09131406842650315,
+  "k46:sin_a*sin_b*cos_c": 0.03144116562166563,
+  "k46:cos_a*cos_b*cos_c": 0.028043849252572736,
+  "k24:cos_a*sin_b*sin_c": 0.02702130421093194,
+  "k24:sin_a*cos_b*sin_c": 0.026969559735439134,
+  "k28:cos_a*sin_b*sin_c": 0.01061251452586691,
+  "k28:sin_a*cos_b*sin_c": 0.010611188339192478,
+  "k56:cos_a*cos_b*cos_c": 0.009302923691513795,
+  "k56:sin_a*sin_b*cos_c": 0.008637683625880008,
+  "k28:cos_a*cos_b*cos_c": 0.008511868293754096,
+  "k28:sin_a*sin_b*cos_c": 0.00850139988570224,
+  "k56:sin_a*cos_b*sin_c": 0.005686533666658878,
+  "k56:cos_a*sin_b*sin_c": 0.005685974878104693
+ },
+ "recon_bias_only": {
+  "argmax_acc": 0.008849557522123894,
+  "ce": 26.14475440979004
+ },
+ "recon_bias_plus_all_kkk": {
+  "argmax_acc": 0.6165713838201895,
+  "ce": 3.761808395385742
+ },
+ "recon_bias_plus_kkk_plus_cross_kkl": {
+  "argmax_acc": 0.6337222961860757,
+  "ce": 4.069649696350098
+ },
+ "greedy_top_8_components": {
+  "argmax_acc": 0.13681572558540214,
+  "ce": 10.353835105895996
+ },
+ "greedy_top_16_components": {
+  "argmax_acc": 0.5115514135797635,
+  "ce": 2.26031756401062
+ },
+ "greedy_top_32_components": {
+  "argmax_acc": 0.7993578197196335,
+  "ce": 1.0575472116470337
+ },
+ "greedy_top_64_components": {
+  "argmax_acc": 0.8693711332132509,
+  "ce": 0.6981582641601562
+ },
+ "greedy_top_128_components": {
+  "argmax_acc": 0.8759495653535907,
+  "ce": 0.8664613962173462
+ },
+ "greedy_top_256_components": {
+  "argmax_acc": 0.9528545696608974,
+  "ce": 0.12967391312122345
+ },
+ "greedy_top_512_components": {
+  "argmax_acc": 0.9997650559949879,
+  "ce": 0.0025247852317988873
+ },
+ "greedy_top_1024_components": {
+  "argmax_acc": 1.0,
+  "ce": 5.431828321889043e-05
+ },
+ "top_components_outside_bias_and_kkk": [
+  {
+   "a": "cos24",
+   "b": "cos24",
+   "c": "sin48",
+   "frac": 0.004674536157305122
+  },
+  {
+   "a": "sin24",
+   "b": "sin24",
+   "c": "sin48",
+   "frac": 0.0038293842631896
+  },
+  {
+   "a": "sin46",
+   "b": "cos46",
+   "c": "cos22",
+   "frac": 0.0017631148368276199
+  },
+  {
+   "a": "cos46",
+   "b": "sin46",
+   "c": "cos22",
+   "frac": 0.0017605930973000992
+  },
+  {
+   "a": "cos46",
+   "b": "cos46",
+   "c": "sin24",
+   "frac": 0.0015572321924784392
+  },
+  {
+   "a": "cos24",
+   "b": "cos24",
+   "c": "cos22",
+   "frac": 0.001441676395614293
+  },
+  {
+   "a": "sin24",
+   "b": "sin24",
+   "c": "cos22",
+   "frac": 0.00143886669406667
+  },
+  {
+   "a": "sin46",
+   "b": "cos46",
+   "c": "sin21",
+   "frac": 0.0014252227842581314
+  },
+  {
+   "a": "cos46",
+   "b": "sin46",
+   "c": "sin21",
+   "frac": 0.0014226954112637486
+  },
+  {
+   "a": "cos24",
+   "b": "cos24",
+   "c": "cos43",
+   "frac": 0.001303699235191547
+  },
+  {
+   "a": "sin46",
+   "b": "cos46",
+   "c": "cos43",
+   "frac": 0.001240949079384992
+  },
+  {
+   "a": "cos46",
+   "b": "sin46",
+   "c": "cos43",
+   "frac": 0.0012392507883171823
+  }
+ ]
+}

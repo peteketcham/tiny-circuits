@@ -179,3 +179,25 @@ onto a subset of components *is* the least-squares fit, so energy fractions are 
   > 10% of class-varying energy unexplained.
 My expectation: H1 is the main reason (~60% confidence), H2 second.
 Script: `scripts/phase1_trigfit_gap.py` → `runs/p113_s0/trigfit_gap.json`.
+
+### Result: the trig-fit gap (`runs/p113_s0/trigfit_gap.json`, `trigfit_gap_control.json`; scripts `phase1_trigfit_gap.py`)
+
+3-D Fourier decomposition of the Phase 1 logits over (a, b, c), as fractions of the class-varying energy:
+class bias (0,0,k) 23.0%; a, b and c all at the same key frequency (all 8 sign patterns) 67.8%; a, b at key k with c at a
+*different key* frequency 0.8%; a, b at key k with c at a **non-key** frequency 6.9%; everything else 1.4%.
+- **H1 refuted.** Bias + all 8 same-frequency sign patterns reconstruct only 61.7% of argmax decisions (predicted ≳ 95%).
+- **H2 refuted as stated.** Key-to-key cross-frequency terms are 0.8% of the energy.
+- **Energy is a poor guide to decisions here.** The logits are large (−195 to +64), so the top few terms hold most of the
+  energy but the argmax depends on fine detail: ranked by energy, 16 components give 51% accuracy, 64 give 87%,
+  256 give 95%, and 512 give 99.98% (out of 1.44 million).
+- **The 6.9% block is mostly at harmonics and combinations of the key frequencies** (c-axis, with a and b at key k):
+  2×24 (48), 24−46 (22), 24+46 (43), 2×46 (21), 3×24 (41), 24−28, 24+28, 4×24. This is the pattern a ReLU MLP
+  would produce by mixing frequencies. (Seen first in the top-12 list, then tested; **exploratory, not pre-registered**.)
+- **Test.** Letting c use the 4 key frequencies plus 20 harmonic/combination frequencies (m×k for m=2,3,4 and k₁±k₂, folded
+  mod 113) gives 98.4% argmax accuracy (CE 0.035) with a, b restricted to the key frequencies. Control: 40 random draws
+  of 20 extra non-key c-frequencies give mean 80.3%, min 64.6%, max 94.1%; key frequencies alone give 63.4%.
+  So the structured set beats all 40 random sets (p ≲ 1/41), but **adding any extra components helps a lot**
+  (random mean 80% vs 63%), so the structured effect is the ~18-point gap to random, not the whole improvement.
+- **What this changes in the README.** Claim 10 is rewritten: the simple "Σ cos(w(a+b−c))" form is an energy-level
+  description that misses what the argmax needs. I have not shown *how* the network produces these extra terms, or that
+  they are a "sharpening" of the peak (a plausible but untested reading).

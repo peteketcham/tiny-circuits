@@ -35,7 +35,7 @@ Task: (a + b) mod 113, 30% of the 12,769 pairs for training, AdamW lr 1e-3, weig
 | 7 | The input and output sides use the same four frequencies. The top-4 Fourier frequencies of both `W_E` and `W_U` are {24, 28, 46, 56}. (80% of `W_U` norm² is in them, against 93% for `W_E`.) | `mechanism.json` | High for this seed |
 | 8 | The heads specialise by frequency, in two near-duplicate pairs. Heads 0 and 2 write mostly k=46 (81% of key-frequency norm², with 13% on 28 and 6% on 56). Heads 1 and 3 write mostly k=24 (86%). This is what each head's value-output circuit *writes*, not proof of how the MLP uses it. | `mechanism.json` (`head_OV_frequency_content`) | Medium |
 | 9 | Activation patching (3000 clean/corrupted pairs; metric = how often the *clean* answer comes back; chance 0.9%): no single head's clean output restores it (1–2%); all four heads restore 100%; patching all heads except one restores only ~32–34% whichever one is left out; patching all MLP activations restores 100%; patching only one frequency group of neurons restores 1.6–5.3%. So the answer is computed jointly from all four heads and all four neuron groups, not by any single sub-circuit. | `mechanism.json` (`activation_patching_clean_answer_accuracy`) | Medium |
-| 10 | **Partly refuted:** the textbook form logit(c) ≈ Σₖ aₖcos(wₖ(a+b−c)) + bₖsin(wₖ(a+b−c)) + class bias does *not* describe this model well enough. It explains R² = 0.82 of logit variance (0.59 without the class bias), and the fitted logits pick the right answer for only 66.7% of pairs. The model's real logits have additional structure that I have not characterised. | `mechanism.json` (`trig_fit_*`) | Medium-high that the simple form is incomplete; cause unknown |
+| 10 | **Partly refuted, then partly explained.** The textbook form logit(c) ≈ Σₖ aₖcos(wₖ(a+b−c)) + bₖsin(wₖ(a+b−c)) + class bias explains R² = 0.82 of the logit variance but gets only 66.7% of decisions right. Adding every sign pattern at the key frequencies does not fix it (61.7%). The missing piece is on the output axis: components at harmonics and sums/differences of the key frequencies (2×24, 24±46, 3×24, …). Allowing 20 such frequencies lifts accuracy to 98.4%; 40 random sets of 20 non-key frequencies reach 80% on average (best 94%). **Exploratory** (the frequency list was chosen after seeing the spectrum). I have not shown how the network makes these terms. | `mechanism.json` (`trig_fit_*`), `trigfit_gap.json`, `trigfit_gap_control.json` | Medium that the simple form is incomplete; low-medium on the harmonic explanation |
 
 ## Phase 2 results (many seeds, p=53 / 45 / 47; branch `phase2-seeds`)
 
@@ -58,7 +58,7 @@ logit energy) is mine; "no difference" results are limited by the number of seed
 
 ## Not done yet (in the Phase 1 plan)
 
-- **Why claim 10 fails.** The fit is on raw logits, which are dominated by large values; the gap may come from amplitude varying with (a, b), cross-frequency terms, or ReLU harmonics. Not yet tested.
+- **Why claim 10 fails** is now partly answered (see its row) but the mechanism behind the harmonic terms is untested.
 - **Weight-level circuit.** Claim 3 is about the logits. I have not shown, from the weights alone, how the MLP produces the key-frequency terms.
 - **Seeds.** Everything is one seed. Seed universality is the first Phase 2 experiment.
 - **Observed, not investigated:** training loss shows regular sharp spikes every ~1.4k steps (visible in the figure, left panel).
