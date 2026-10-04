@@ -217,3 +217,21 @@ Housekeeping found by this pass:
 - `summary_c1.json` and `summary_early.json` in `runs/sweep_p53/` are snapshots from the 8-seed and 2-seed stages and are not
   regenerated; the final numbers are in `summary_main.json`.
 Not verified: reproducibility on a different machine or JAX version; seeds are bit-reproducible only on the setup used here.
+
+### p=113 transfer check (PLAN.md Addendum B; `runs/sweep_p113/summary_main.json`)
+
+p=113, 30% training data (the Phase 1 setting), seeds 1–5 complete, 14000 steps (`--ckpt_every 250`). Seed 6 was still at step ~3000 at the
+07:00 cutoff and is excluded (its partial config/log are in the folder; it has no `final.npz`). Seed 0 is the Phase 1 run.
+- **T1 holds, narrowly.** 5/5 finished seeds reach ≥99% test accuracy (time to 50%: steps 3500, 6000, 6250, 10000, 10500).
+  The prediction was "≥5 of 6"; it is met only because 5 finished seeds all grokked — seed 6 is unknown.
+- **T2 holds.** Key-frequency counts: 4, 4, 5, 4, 3.
+- **T3 holds.** Sets: {2,9,17,36}, {9,11,15,47}, {8,19,29,42,51}, {20,37,45,49}, {6,10,45} (and seed 0: {24,28,46,56}); no two identical.
+- **T4 holds, with one caveat.** Excluded loss 12.8–37.4 (>10 everywhere); random-frequency controls fail on every seed (restricted ≥ 11.3).
+  The restricted/full ratio is 0.00, 0.12, 0.36, 3.8 and **52.9** (seed 5). Seed 5 passes only through the pre-written "or absolute < 1e-3"
+  clause: its full test loss is already 6.0e-7, so the restricted loss of 3.1e-5 is a large ratio of a negligible number. Seed 4's
+  restricted loss (2.4e-3) is the largest in absolute terms; still 10⁻³ against a chance level of 4.7.
+- Descriptive only (not a test; checkpoints are 250 steps apart here): the embedding top-n at the last checkpoint with test accuracy <20% overlaps
+  the final key set with Jaccard 1.0, 0.6, 0.67, 0.6, 1.0 — in line with claim P4 but too coarse to add to it.
+- The analysis script was re-run and its output is byte-identical to the committed summary.
+- Operational note: with `--ckpt_every 1000` at this size the training overshoots its time budget and the outer `timeout` killed it twice
+  (exit 124), losing up to 1000 steps each time. Resuming is bit-exact, so nothing is affected; `--ckpt_every 250` fixed it.

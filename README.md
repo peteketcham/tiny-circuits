@@ -40,7 +40,7 @@ Task: (a + b) mod 113, 30% of the 12,769 pairs for training, AdamW lr 1e-3, weig
 ## Phase 2 results (many seeds, p=53 / 45 / 47; branch `phase2-seeds`)
 
 Setup differs from Phase 1: smaller moduli and more training data (50–60% instead of 30%) so that tens of seeds fit in a few
-hours. Predictions were written down in `PLAN.md` before the results existed. Scorecard: **held:** Q1, Q2, Q3, Q5a–d; **failed:** Q4.
+hours. Predictions were written down in `PLAN.md` before the results existed. Scorecard: **held:** Q1, Q2, Q3, Q5a–d, and T1–T4 (the p=113 check); **failed:** Q4.
 Most predictions were "nothing special happens", which is an easy bar; Q3 and Q4 were the real tests.
 
 | # | Claim | Evidence | Confidence |
@@ -52,6 +52,7 @@ Most predictions were "nothing special happens", which is an easy bar; Q3 and Q4
 | P5 | Composite vs prime modulus (p=45 vs p=47, 24 seeds each): no detected difference. 3–5 key frequencies at both; at p=45 45.6% of key frequencies share a factor with 45 vs 45.4% expected by chance (p = 1.0); mean number of key frequencies 3.75 vs 3.78. A placebo on p=47 did not fire (p = 0.13). | `runs/q5.json`, `runs/sweep_p45/summary_main.json`, `runs/sweep_p47/summary_main.json` | Low-medium: ~90 draws can only detect a ~10-point shift, and p=45 is small |
 | P6 | Training is bit-for-bit deterministic on this machine: independent reruns match the original weights exactly in 30/30 seeds (step 1500) and in 3/3 full 6000-step retrainings (seeds 0, 8, 17). | Lab notebook (C2, Q3) | High on this machine |
 | P7 | **Failed prediction:** head duplication as in Phase 1 does not hold up. I predicted that in most seeds two heads would write the same dominant frequency with ≥50% share each; that is true in only 13 of 29 seeds. The looser statement ("two heads share a dominant frequency", 28/29) is almost guaranteed by pigeonhole (4 heads, 3–5 frequencies; chance alone gives ~26/29), so I don't claim it. | `compare_main.json` (`Q4`) | High that the strict version fails |
+| P8 | The main findings carry over to the Phase 1 setting (p=113, 30% data), on 5 seeds: all 5 finished seeds grok (50% test accuracy at steps 3500–10500), each with 3–5 key frequencies ({2,9,17,36}, {9,11,15,47}, {8,19,29,42,51}, {20,37,45,49}, {6,10,45}), none sharing a set with each other or with Phase 1's {24,28,46,56}; removing the key frequencies destroys test performance (loss 12.8–37.4) and random frequency sets do not. A sixth seed did not finish. One seed's restricted/full ratio is 53× but on a loss of 6e-7, so it is negligible in absolute terms. | `runs/sweep_p113/summary_main.json`; PLAN.md Addendum B | Medium: 5 seeds, qualitative agreement only |
 
 Caveats that apply to everything here: one architecture; small moduli; the key-frequency definition (a frequency pair holding ≥1% of the class-varying
 logit energy) is mine; "no difference" results are limited by the number of seeds.
