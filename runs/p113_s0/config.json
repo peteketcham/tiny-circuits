@@ -1,0 +1,15 @@
+{
+ "p": 113,
+ "seed": 0,
+ "data_seed": null,
+ "train_frac": 0.3,
+ "steps": 15000,
+ "lr": 0.001,
+ "wd": 1.0,
+ "d_model": 128,
+ "n_heads": 4,
+ "d_mlp": 512,
+ "log_every": 100,
+ "ckpt_every": 250,
+ "out": "runs/p113_s0"
+}
